@@ -26,6 +26,7 @@ import es.us.isa.FAMA.Exceptions.FAMAException;
 import es.us.isa.FAMA.Reasoner.Reasoner;
 import es.us.isa.FAMA.Reasoner.questions.ExplainErrorsQuestion;
 import es.us.isa.FAMA.errors.Error;
+import es.us.isa.FAMA.errors.Explanation;
 import es.us.isa.FAMA.errors.Observation;
 import es.us.isa.FAMA.models.featureModel.GenericFeature;
 import es.us.isa.FAMA.models.variabilityModel.VariabilityElement;
@@ -101,9 +102,15 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements
 				List<String> fmdiag = fmdiag(S,AC);
 				//System.out.println("Relation "+fmdiag.get(0)+" is causing the conflict");
 				explanations=fmdiag;
+				Explanation exp= new Explanation();
+				for(String s: fmdiag){
+					exp.addRelation(chReasoner.relation.get(s));
+				}
+				e.addExplanation(exp);
 			}else{
 				List<String> allExpl= new LinkedList<String>();
 				List<String> fmdiag = fmdiag(S,AC);
+				
 				while(fmdiag.size()!=0){
 					allExpl.addAll(fmdiag);
 					S.removeAll(fmdiag);
@@ -111,9 +118,11 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements
 					fmdiag = fmdiag(S,AC);
 				}
 				explanations=fmdiag;
-//				for(String str:allExpl){
-//					System.out.println("Relation "+str+" is causing the conflict");
-//				}
+				for(String s: allExpl){
+					Explanation exp= new Explanation();
+					exp.addRelation(chReasoner.relation.get(s));
+					e.addExplanation(exp);
+				}
 			}
 	
 		}

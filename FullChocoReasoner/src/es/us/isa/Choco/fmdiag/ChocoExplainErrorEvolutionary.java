@@ -14,9 +14,6 @@ import java.util.Map.Entry;
 import org.jenetics.BitChromosome;
 import org.jenetics.BitGene;
 import org.jenetics.Genotype;
-import org.jenetics.Mutator;
-import org.jenetics.RouletteWheelSelector;
-import org.jenetics.SinglePointCrossover;
 import org.jenetics.engine.Engine;
 import org.jenetics.engine.EvolutionResult;
 import org.jenetics.util.Factory;
@@ -36,8 +33,10 @@ import es.us.isa.FAMA.Exceptions.FAMAException;
 import es.us.isa.FAMA.Reasoner.Reasoner;
 import es.us.isa.FAMA.Reasoner.questions.ExplainErrorsQuestion;
 import es.us.isa.FAMA.errors.Error;
+import es.us.isa.FAMA.errors.Explanation;
 import es.us.isa.FAMA.errors.Observation;
 import es.us.isa.FAMA.models.featureModel.GenericFeature;
+import es.us.isa.FAMA.models.featureModel.GenericRelation;
 import es.us.isa.FAMA.models.variabilityModel.VariabilityElement;
 
 public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements ExplainErrorsQuestion {
@@ -49,6 +48,8 @@ public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements Expl
 	Collection<Error> errors;
 	Map<String, Constraint> relations = null;
 	static ArrayList<Constraint> cons = new ArrayList<Constraint>();
+	static ArrayList<String> consStr = new ArrayList<String>();
+
 	public boolean flexactive = false;
 	public int m = 1;
 
@@ -136,22 +137,37 @@ public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements Expl
 			relations.putAll(cons4obs);
 			relations.putAll(chReasoner.getRelations());
 			
-			for(Constraint c: relations.values()){
-				cons.add(c);
+			for(Entry<String,Constraint> c: relations.entrySet()){
+				consStr.add(c.getKey());
+				cons.add(c.getValue());
 			}
 
 			
 			// 1.) Define the genotype (factory) suitable
 			// for the problem.
-			Factory<Genotype<BitGene>> gtf = Genotype.of(BitChromosome.of(relations.size(), 0.1));
+			Factory<Genotype<BitGene>> gtf = Genotype.of(BitChromosome.of(relations.size(), 0.3));
 
 			// 3.) Create the execution environment.
 			Engine<BitGene, Integer> engine = Engine.builder(ChocoExplainErrorEvolutionary::eval, gtf).minimizing().build();
 
 			// 4.) Start the execution (evolution) and collect the result.
 			Genotype<BitGene> result = engine.stream().limit(100).collect(EvolutionResult.toBestGenotype());
+			
+			for(int g =0;g<result.getChromosome().length();g++){
+				if(result.getChromosome().getGene(g).booleanValue()){
+					GenericRelation relation = chReasoner.relation.get(consStr.get(g));
+					
+					if(relation !=null){
+						Explanation exp = new Explanation();
 
-			System.out.println("Hello World:\n" + result.getChromosome().as(BitChromosome.class).bitCount());
+					exp.addRelation(relation);
+					e.addExplanation(exp);
+
+					}
+					//System.err.println("Not yet finished");
+				}
+			}
+//			System.out.println(result.getChromosome().as(BitChromosome.class).bitCount());
 			// queda por mirar que no cuente el numero de ctc pero el de constraints con posibilidad de tener el error
 		}
 

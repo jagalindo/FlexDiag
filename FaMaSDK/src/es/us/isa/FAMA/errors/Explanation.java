@@ -58,11 +58,12 @@ public class Explanation {
 		return str;
 	}
 	
+	@Override
 	public boolean equals(Object o){
 		boolean b = false;
 		if (o instanceof Explanation){
 			Explanation exp = (Explanation) o;
-			if (exp.getRelations().equals(relations)){
+			if (exp.toString().equals(this.toString())){
 				b = true;
 			}
 		}

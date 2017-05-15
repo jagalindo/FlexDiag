@@ -60,4 +60,8 @@ public abstract class Error {
 	public void addExplanation (Explanation exp) {
 		explanations.add(exp);
 	}
+	
+	public void addExplanations (Collection<Explanation> exps){
+		explanations.addAll(exps);
+	}
 }

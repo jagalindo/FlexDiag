@@ -66,6 +66,8 @@ public class ChocoReasoner extends FeatureModelReasoner {
 	private List<Constraint> configConstraints;
 	private AbstractIntVarSelector heuristic;
 	private Map<String, Object> heuristicsMap;
+	
+	public Map<String, GenericRelation> relation;
 
 	public ChocoReasoner() {
 		super();
@@ -85,7 +87,7 @@ public class ChocoReasoner extends FeatureModelReasoner {
 		this.problem = new CPModel();
 		this.dependencies = new HashMap<String, Constraint>();
 		this.ctc = new HashMap<String, Constraint>();
-
+		this.relation= new HashMap<String,GenericRelation>();
 		this.setRelations = new HashMap<String, IntegerExpressionVariable>();
 		this.configConstraints = new ArrayList<Constraint>();
 		heuristicsMap = new HashMap<String, Object>();
@@ -333,6 +335,7 @@ public class ChocoReasoner extends FeatureModelReasoner {
 		Constraint mandatoryConstraint = ifOnlyIf(eq(parentVar, 1), eq(
 				childVar, 1));
 		dependencies.put(rel.getName(), mandatoryConstraint);
+		relation.put(rel.getName(), rel);
 		return mandatoryConstraint;
 
 	}
@@ -345,6 +348,8 @@ public class ChocoReasoner extends FeatureModelReasoner {
 		Constraint optionalConstraint = implies(eq(parentVar, 0), eq(childVar,
 				0));
 		dependencies.put(rel.getName(), optionalConstraint);
+		relation.put(rel.getName(), rel);
+
 		return optionalConstraint;
 
 	}
@@ -375,6 +380,8 @@ public class ChocoReasoner extends FeatureModelReasoner {
 		Constraint cardConstraint = ifThenElse(gt(parentVar, 0), eq(childVar,
 				cardinalityVar), eq(childVar, 0));
 		dependencies.put(rel.getName(), cardConstraint);
+		relation.put(rel.getName(), rel);
+
 		return cardConstraint;
 
 	}
@@ -388,6 +395,8 @@ public class ChocoReasoner extends FeatureModelReasoner {
 				destinationVar, 0));
 		dependencies.put(rel.getName(), requiresConstraint);
 		ctc.put(rel.getName(), requiresConstraint);
+		relation.put(rel.getName(), rel);
+
 		return requiresConstraint;
 
 	}
@@ -401,6 +410,7 @@ public class ChocoReasoner extends FeatureModelReasoner {
 				eq(destVar, 0));
 		dependencies.put(rel.getName(), excludesConstraint);
 		ctc.put(rel.getName(), excludesConstraint);
+		relation.put(rel.getName(), rel);
 
 		return excludesConstraint;
 
@@ -454,6 +464,8 @@ public class ChocoReasoner extends FeatureModelReasoner {
 				cardinalityVar), eq(sum(aux), 0));
 		dependencies.put(rel.getName(), setConstraint);
 		setRelations.put(rel.getName(), sum(aux));
+		relation.put(rel.getName(), rel);
+
 		// setRelations.put(rel.getName(), cardinalityVar);
 		return setConstraint;
 	}

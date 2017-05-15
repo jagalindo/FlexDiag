@@ -33,12 +33,20 @@ public abstract class GenericRelation extends VariabilityElement {
 		this.name = name;
 	}
 	
+	@Override
 	public boolean equals(Object o){
 		boolean res = false;
 		if (o instanceof GenericRelation) {
 			GenericRelation f = (GenericRelation)o;
 			return this.name.equalsIgnoreCase(f.getName());
 		}
+		return res;
+	}
+	
+	@Override
+	public int hashCode() {
+		int res = 0;
+			//res+=this.name.hashCode();
 		return res;
 	}
 }
