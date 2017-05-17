@@ -1,4 +1,4 @@
-package es.us.isa.Choco.fmdiag;
+package es.us.isa.Choco.fmdiag.model;
 
 import static choco.Choco.eq;
 
@@ -10,14 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.Executor;
-
-import org.jenetics.BitChromosome;
-import org.jenetics.BitGene;
-import org.jenetics.Genotype;
-import org.jenetics.engine.Engine;
-import org.jenetics.engine.EvolutionResult;
-import org.jenetics.util.Factory;
 
 import choco.cp.model.CPModel;
 import choco.cp.solver.CPSolver;
@@ -37,55 +29,23 @@ import es.us.isa.FAMA.errors.Error;
 import es.us.isa.FAMA.errors.Explanation;
 import es.us.isa.FAMA.errors.Observation;
 import es.us.isa.FAMA.models.featureModel.GenericFeature;
-import es.us.isa.FAMA.models.featureModel.GenericRelation;
 import es.us.isa.FAMA.models.variabilityModel.VariabilityElement;
 
-public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements ExplainErrorsQuestion {
+public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements
+		ExplainErrorsQuestion {
 
-	public boolean returnAllPossibeExplanations = false;
-	private static ChocoReasoner chReasoner;
+	public boolean returnAllPossibeExplanations=false;
+	private ChocoReasoner chReasoner;
 	public List<String> explanations;
 
 	Collection<Error> errors;
-	Map<String, Constraint> relations = null;
-	static ArrayList<Constraint> cons = new ArrayList<Constraint>();
-	static ArrayList<String> consStr = new ArrayList<String>();
+	Map<String, Constraint> relations =null;
 
-	public boolean flexactive = false;
-	public int m = 1;
-
-
-
-	public static Integer eval(Genotype<BitGene> gt) {
-		int res= Integer.MAX_VALUE;
-
-		try{
-			int i=0;
-
-			Model p = new CPModel();
-			p.addVariables(chReasoner.getVars());
-
-			Iterator<BitGene> iterator = gt.getChromosome().iterator();
-			while(iterator.hasNext()){
-				if(iterator.next().booleanValue()){
-					p.addConstraint(cons.get(i));
-				}
-				i++;
-			}
-			Solver s = new CPSolver();
-			s.read(p);
-			s.solve();
-			if(!s.isFeasible()){
-				res = gt.getChromosome().as(BitChromosome.class).bitCount();
-			}	
-		}catch(ArrayIndexOutOfBoundsException e){}
-				
-		//System.out.println(res);
-		return res;
-	}
+	public boolean flexactive=false;
+	public int m=1;
 	
 	public PerformanceResult answer(Reasoner r) throws FAMAException {
-
+		
 		ChocoResult res = new ChocoResult();
 		chReasoner = (ChocoReasoner) r;
 
@@ -93,7 +53,7 @@ public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements Expl
 			errors = new LinkedList<Error>();
 			return res;
 		}
-
+		
 		Iterator<Error> itE = this.errors.iterator();
 		Map<String, IntegerVariable> vars = chReasoner.getVariables();
 		Map<String, IntegerExpressionVariable> setVars = chReasoner.getSetRelations();
@@ -103,8 +63,8 @@ public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements Expl
 			// observaciones
 			Error e = itE.next();
 
-			// System.out.println("Explanations for "+e.toString());
-			Map<String, Constraint> cons4obs = new HashMap<String, Constraint>();
+			//System.out.println("Explanations for "+e.toString());
+			Map<String,Constraint> cons4obs = new HashMap<String,Constraint>();
 			Observation obs = e.getObservation();
 			Map<? extends VariabilityElement, Object> values = obs.getObservation();
 			Iterator<?> its = values.entrySet().iterator();
@@ -112,7 +72,7 @@ public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements Expl
 			// mientras haya observations
 			// las imponemos al problema como restricciones
 			while (its.hasNext()) {
-				int i = 0;
+				int i=0;
 				try {
 					Entry<? extends VariabilityElement, Object> entry = (Entry<? extends VariabilityElement, Object>) its.next();
 					Constraint cn;
@@ -125,62 +85,117 @@ public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements Expl
 						IntegerExpressionVariable arg0 = setVars.get(ve.getName());
 						cn = eq(arg0, value);
 					}
-					cons4obs.put("Temporary" + i, cn);
+					cons4obs.put("Temporary"+i,cn);
 					i++;
 				} catch (ClassCastException exc) {
 				}
 			}
-
-			// solve the problem y fmdiag
+			
+			//solve the problem  y fmdiag
 			relations = new HashMap<String, Constraint>();
 			relations.putAll(cons4obs);
 			relations.putAll(chReasoner.getRelations());
 			
-			for(Entry<String,Constraint> c: relations.entrySet()){
-				consStr.add(c.getKey());
-				cons.add(c.getValue());
-			}
-
-			
-			// 1.) Define the genotype (factory) suitable
-			// for the problem.
-			Factory<Genotype<BitGene>> gtf = Genotype.of(BitChromosome.of(relations.size(), 0.3));
-
-			// 3.) Create the execution environment.
-			Engine<BitGene, Integer> engine = Engine.builder(ChocoExplainErrorEvolutionary::eval, gtf).executor( (Executor) Runnable :: run).minimizing().build();
-
-			// 4.) Start the execution (evolution) and collect the result.
-			Genotype<BitGene> result = engine.stream().limit(100).collect(EvolutionResult.toBestGenotype());
-			
-			for(int g =0;g<result.getChromosome().length();g++){
-				if(result.getChromosome().getGene(g).booleanValue()){
-					GenericRelation relation = chReasoner.relation.get(consStr.get(g));
-					
-					if(relation !=null){
-						Explanation exp = new Explanation();
-
-					exp.addRelation(relation);
+			ArrayList<String> S = new ArrayList<String>(chReasoner.getRelations().keySet());		
+			ArrayList<String> AC = new ArrayList<String>(relations.keySet());
+			if(returnAllPossibeExplanations==false){
+				List<String> fmdiag = fmdiag(S,AC);
+				//System.out.println("Relation "+fmdiag.get(0)+" is causing the conflict");
+				explanations=fmdiag;
+				Explanation exp= new Explanation();
+				for(String s: fmdiag){
+					exp.addRelation(chReasoner.relation.get(s));
+				}
+				e.addExplanation(exp);
+			}else{
+				List<String> allExpl= new LinkedList<String>();
+				List<String> fmdiag = fmdiag(S,AC);
+				
+				while(fmdiag.size()!=0){
+					allExpl.addAll(fmdiag);
+					S.removeAll(fmdiag);
+					AC.removeAll(fmdiag);
+					fmdiag = fmdiag(S,AC);
+				}
+				explanations=fmdiag;
+				for(String s: allExpl){
+					Explanation exp= new Explanation();
+					exp.addRelation(chReasoner.relation.get(s));
 					e.addExplanation(exp);
-
-					}
-					//System.err.println("Not yet finished");
 				}
 			}
-//			System.out.println(result.getChromosome().as(BitChromosome.class).bitCount());
-			// queda por mirar que no cuente el numero de ctc pero el de constraints con posibilidad de tener el error
+	
 		}
-
 		return new ChocoResult();
 
 	}
+	
+	public List<String> fmdiag(List<String> S,List<String> AC){
+		if(S.size()==0||!isConsistent(less(AC,S))){
+			return new ArrayList<String>();
+		}else{
+			return diag(new ArrayList<String>(),S,AC);
+		}
+	} 
+	
+	public List<String> diag(List<String> D, List<String> S,List<String> AC){
+		if(D.size()!=0&&isConsistent(AC)){
+			return new ArrayList<String>();
+		}
+		if(flexactive){
+			if(S.size()<=m){
+				return S;
+			}
+		}else{
+			if(S.size()==1){
+				return S;
+			}
+		}
+		int k= S.size()/2;
+		List<String> S1=S.subList(0, k);
+		List<String> S2=S.subList(k, S.size());
+		List<String> A1=diag(S2,S1,less(AC,S2));
+		List<String> A2=diag(A1,S2,less(AC,A1));
+		return plus(A1,A2);
+	}
+	
+	private List<String> plus(List<String> a1, List<String> a2) {
+		List<String> res=new ArrayList<String>();
+		res.addAll(a1);
+		res.addAll(a2);
+		return res;
+	}
 
+	private List<String> less(List<String> aC, List<String> s2) {
+		List<String> res=new ArrayList<String>();
+		res.addAll(aC);
+		res.removeAll(s2);
+		return res; 
+	}
 
+	private boolean isConsistent(Collection<String> aC) {
+		Model p = new CPModel();
+		p.addVariables(chReasoner.getVars());
 
+		for(String rel:aC){
+			Constraint c = relations.get(rel);
+
+			if(c==null){
+				System.out.println("Error");
+			}
+			p.addConstraint(c);
+		}
+		Solver s = new CPSolver();
+		s.read(p);
+		s.solve();
+		return s.isFeasible();
+	}
 
 
 	public void setErrors(Collection<Error> colErrors) {
-		this.errors = colErrors;
+		this.errors= colErrors;
 	}
+
 
 	public Collection<Error> getErrors() {
 		return errors;

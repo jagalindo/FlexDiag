@@ -1,4 +1,4 @@
-package es.us.isa.Choco.fmdiag;
+package es.us.isa.Choco.fmdiag.model;
 
 import static choco.Choco.eq;
 
@@ -24,7 +24,7 @@ import choco.kernel.model.constraints.Constraint;
 import choco.kernel.model.variables.integer.IntegerExpressionVariable;
 import choco.kernel.model.variables.integer.IntegerVariable;
 import choco.kernel.solver.Solver;
-import es.us.isa.Choco.fmdiag.ChocoExplainErrorFMDIAGParalell.diagThreads;
+import es.us.isa.Choco.fmdiag.model.ChocoExplainErrorFMDIAGParalell.diagThreads;
 import es.us.isa.ChocoReasoner.ChocoQuestion;
 import es.us.isa.ChocoReasoner.ChocoReasoner;
 import es.us.isa.ChocoReasoner.ChocoResult;

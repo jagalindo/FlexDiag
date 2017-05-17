@@ -1,5 +1,5 @@
-import es.us.isa.Choco.fmdiag.ChocoExplainErrorEvolutionary;
-import es.us.isa.Choco.fmdiag.ChocoExplainErrorFMDIAG;
+import es.us.isa.Choco.fmdiag.model.ChocoExplainErrorEvolutionary;
+import es.us.isa.Choco.fmdiag.model.ChocoExplainErrorFMDIAG;
 import es.us.isa.ChocoReasoner.ChocoReasoner;
 import es.us.isa.ChocoReasoner.questions.ChocoDetectErrorsQuestion;
 import es.us.isa.ChocoReasoner4Exp.questions.ChocoExplainErrorsQuestion;
@@ -8,7 +8,7 @@ import es.us.isa.FAMA.models.FAMAfeatureModel.fileformats.XMLReader;
 import es.us.isa.FAMA.models.variabilityModel.VariabilityModel;
 import es.us.isa.FAMA.models.variabilityModel.parsers.WrongFormatException;
 
-public class Prueba {
+public class DetectAndExplainErrors {
 
 	public static void main(String[] args) throws WrongFormatException {
 		// TODO Auto-generated method stub
