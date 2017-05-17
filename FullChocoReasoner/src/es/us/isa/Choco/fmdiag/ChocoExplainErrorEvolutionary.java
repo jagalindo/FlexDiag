@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Executor;
 
 import org.jenetics.BitChromosome;
 import org.jenetics.BitGene;
@@ -71,7 +72,6 @@ public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements Expl
 				}
 				i++;
 			}
-			
 			Solver s = new CPSolver();
 			s.read(p);
 			s.solve();
@@ -114,8 +114,7 @@ public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements Expl
 			while (its.hasNext()) {
 				int i = 0;
 				try {
-					Entry<? extends VariabilityElement, Object> entry = (Entry<? extends VariabilityElement, Object>) its
-							.next();
+					Entry<? extends VariabilityElement, Object> entry = (Entry<? extends VariabilityElement, Object>) its.next();
 					Constraint cn;
 					int value = (Integer) entry.getValue();
 					VariabilityElement ve = entry.getKey();
@@ -148,7 +147,7 @@ public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements Expl
 			Factory<Genotype<BitGene>> gtf = Genotype.of(BitChromosome.of(relations.size(), 0.3));
 
 			// 3.) Create the execution environment.
-			Engine<BitGene, Integer> engine = Engine.builder(ChocoExplainErrorEvolutionary::eval, gtf).minimizing().build();
+			Engine<BitGene, Integer> engine = Engine.builder(ChocoExplainErrorEvolutionary::eval, gtf).executor( (Executor) Runnable :: run).minimizing().build();
 
 			// 4.) Start the execution (evolution) and collect the result.
 			Genotype<BitGene> result = engine.stream().limit(100).collect(EvolutionResult.toBestGenotype());
