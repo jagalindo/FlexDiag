@@ -73,6 +73,7 @@ public class ChocoReasoner extends FeatureModelReasoner {
 		super();
 		reset();
 	}
+
 	public int getPVariablesNumber(){
 		return this.problem.getNbTotVars();
 	}

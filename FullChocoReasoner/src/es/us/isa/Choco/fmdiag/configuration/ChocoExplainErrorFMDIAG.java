@@ -41,12 +41,22 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 	Map<String, Constraint> relations = null;
 	public boolean flexactive = false;
 	public int m = 1;
-	Product p;
+	Product s,r;
 	Map<String, Constraint> result = new HashMap<String, Constraint>();
 
+	public void setConfiguration(Product s) {
+		// TODO Auto-generated method stub
+		this.s=s;
+	}
+
+	public void setRequirement(Product r) {
+		// TODO Auto-generated method stub
+		this.r=r;
+	}
+	
 	@Override
 	public void setProduct(Product p) {
-		this.p = p;
+		this.s = p;
 	}
 
 	@Override
@@ -59,18 +69,27 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 
 		ChocoResult res = new ChocoResult();
 		chReasoner = (ChocoReasoner) r;
-
-		Map<String, Constraint> productConstraint = new HashMap<String, Constraint>();
-
-		for (GenericFeature f : p.getFeatures()) {
-			productConstraint.put("U_" + f.getName(), Choco.eq(chReasoner.getVariables().get(f), 1));
-		}
-
 		// solve the problem y fmdiag
 		relations = new HashMap<String, Constraint>();
+
+		Map<String, Constraint> productConstraint = new HashMap<String, Constraint>();
+		for (GenericFeature f : this.s.getFeatures()) {
+			IntegerVariable var = chReasoner.getVariables().get(f.getName());
+			//System.out.println(var);
+			productConstraint.put("U_" + f.getName(), Choco.eq(var, 1));
+		}
+
+
+		Map<String, Constraint> requirementConstraint = new HashMap<String, Constraint>();
+		for (GenericFeature f : this.r.getFeatures()) {
+			IntegerVariable var = chReasoner.getVariables().get(f.getName());
+			//System.out.println(var);
+			productConstraint.put("R_" + f.getName(), Choco.eq(var, 1));
+		}
+
 		relations.putAll(chReasoner.getRelations());
 		relations.putAll(productConstraint);
-
+		relations.putAll(requirementConstraint);
 		ArrayList<String> S = new ArrayList<String>(productConstraint.keySet());
 		ArrayList<String> AC = new ArrayList<String>(relations.keySet());
 		//AC.addAll(productConstraint.keySet());
@@ -162,5 +181,7 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 		s.solve();
 		return s.isFeasible();
 	}
+
+
 
 }

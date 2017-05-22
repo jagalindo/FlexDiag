@@ -14,47 +14,51 @@ public class DetectAndExplainProductErrors {
 		XMLReader reader = new XMLReader();
 		FAMAFeatureModel fm = (FAMAFeatureModel) reader.parseFile("models/HIS.xml");
 //		FAMAFeatureModel fm = (FAMAFeatureModel) reader.parseFile("models/test.xml");
-		Product p = new Product();
-		p.addFeature(new Feature("LIGHT-CONTROL"));//CAUSES ERROR
-		p.addFeature(new Feature("POWER-LINE"));//CAUSES ERROR
-		p.addFeature(new Feature("TEMPERATURE"));
-		p.addFeature(new Feature("VIDEO"));
-		p.addFeature(new Feature("LIGHT-CONTROL"));
+		Product r = new Product();
+		r.addFeature(new Feature("LIGHT-CONTROL"));//CAUSES ERROR
+		
+		Product s = new Product();
+		s.addFeature(new Feature("POWER-LINE"));//CAUSES ERROR
+		s.addFeature(new Feature("TEMPERATURE"));
+		s.addFeature(new Feature("VIDEO"));
+		s.addFeature(new Feature("LIGHT-CONTROL"));
+		
 		
 		ChocoReasoner reasoner;
 		
 		//Evolution
-		reasoner = new ChocoReasoner();
-		fm.transformTo(reasoner);
+//		reasoner = new ChocoReasoner();
+//		fm.transformTo(reasoner);
 		
 //		ChocoExplainErrorEvolutionary ee = new ChocoExplainErrorEvolutionary();
 //		ee.setProduct(p);
 //		reasoner.ask(ee);
 //		
-		System.out.println(ChocoExplainErrorEvolutionary.result);
+//		System.out.println(ChocoExplainErrorEvolutionary.result);
 		
 		//FMDIAG 1
 		reasoner = new ChocoReasoner();
 		fm.transformTo(reasoner);
 			
 		ChocoExplainErrorFMDIAG fmdiag = new ChocoExplainErrorFMDIAG();
-		fmdiag.setProduct(p);
+		fmdiag.setConfiguration(s);
+		fmdiag.setRequirement(r);
 		reasoner.ask(fmdiag);
 		
 		System.out.println(ChocoExplainErrorEvolutionary.result);
 
 		
 		//FMDIAG 2
-		reasoner = new ChocoReasoner();
-		fm.transformTo(reasoner);
-
-		ChocoExplainErrorFMDIAG fmdiag2 = new ChocoExplainErrorFMDIAG();
-		fmdiag.setProduct(p);
-
-		fmdiag2.returnAllPossibeExplanations=true;
-		reasoner.ask(fmdiag);
-	
-		System.out.println(ChocoExplainErrorEvolutionary.result);
+//		reasoner = new ChocoReasoner();
+//		fm.transformTo(reasoner);
+//
+//		ChocoExplainErrorFMDIAG fmdiag2 = new ChocoExplainErrorFMDIAG();
+//		fmdiag.setProduct(p);
+//
+//		fmdiag2.returnAllPossibeExplanations=true;
+//		reasoner.ask(fmdiag);
+//	
+//		System.out.println(ChocoExplainErrorEvolutionary.result);
 		
 		
 	}
