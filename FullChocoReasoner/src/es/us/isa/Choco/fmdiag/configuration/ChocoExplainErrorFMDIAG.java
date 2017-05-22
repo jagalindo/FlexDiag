@@ -1,22 +1,17 @@
 package es.us.isa.Choco.fmdiag.configuration;
 
-import static choco.Choco.eq;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import choco.Choco;
 import choco.cp.model.CPModel;
 import choco.cp.solver.CPSolver;
 import choco.kernel.model.Model;
 import choco.kernel.model.constraints.Constraint;
-import choco.kernel.model.variables.integer.IntegerExpressionVariable;
 import choco.kernel.model.variables.integer.IntegerVariable;
 import choco.kernel.solver.Solver;
 import es.us.isa.ChocoReasoner.ChocoQuestion;
@@ -26,12 +21,8 @@ import es.us.isa.FAMA.Benchmarking.PerformanceResult;
 import es.us.isa.FAMA.Exceptions.FAMAException;
 import es.us.isa.FAMA.Reasoner.Reasoner;
 import es.us.isa.FAMA.Reasoner.questions.ValidConfigurationErrorsQuestion;
-import es.us.isa.FAMA.errors.Error;
-import es.us.isa.FAMA.errors.Explanation;
-import es.us.isa.FAMA.errors.Observation;
 import es.us.isa.FAMA.models.featureModel.GenericFeature;
 import es.us.isa.FAMA.models.featureModel.Product;
-import es.us.isa.FAMA.models.variabilityModel.VariabilityElement;
 
 public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfigurationErrorsQuestion {
 
@@ -45,12 +36,10 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 	public Map<String, Constraint> result = new HashMap<String, Constraint>();
 
 	public void setConfiguration(Product s) {
-		// TODO Auto-generated method stub
 		this.s=s;
 	}
 
 	public void setRequirement(Product r) {
-		// TODO Auto-generated method stub
 		this.r=r;
 	}
 	

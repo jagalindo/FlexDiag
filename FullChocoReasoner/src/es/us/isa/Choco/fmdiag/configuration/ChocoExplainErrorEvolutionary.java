@@ -18,6 +18,7 @@ import choco.cp.model.CPModel;
 import choco.cp.solver.CPSolver;
 import choco.kernel.model.Model;
 import choco.kernel.model.constraints.Constraint;
+import choco.kernel.model.variables.integer.IntegerVariable;
 import choco.kernel.solver.Solver;
 import es.us.isa.ChocoReasoner.ChocoQuestion;
 import es.us.isa.ChocoReasoner.ChocoReasoner;
@@ -32,19 +33,28 @@ import es.us.isa.FAMA.models.featureModel.Product;
 public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements ValidConfigurationErrorsQuestion {
 
 	public boolean returnAllPossibeExplanations = false;
-	private static ChocoReasoner chReasoner;
-
-	static Map<String, Constraint> relations = null;
+	
+	private static Map<String, Constraint> relations = null;
 
 	public static Map<String, Constraint> result = new HashMap<String, Constraint>();
+	
+	static ChocoReasoner chReasoner;
 	static Map<String, Constraint> productConstraint= new HashMap<String, Constraint>();
-	static ArrayList<Constraint> cons = new ArrayList<Constraint>();
-	static ArrayList<String> consStr = new ArrayList<String>();
-	Product p;
+	static Map<String, Constraint> requirementConstraint= new HashMap<String, Constraint>();
+
+	Product s,r;
+
+	public void setConfiguration(Product s) {
+		this.s=s;
+	}
+
+	public void setRequirement(Product r) {
+		this.r=r;
+	}
 
 	@Override
 	public void setProduct(Product p) {
-		this.p = p;
+		this.s = p;
 	}
 
 	@Override
@@ -62,15 +72,17 @@ public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements Vali
 			p.addVariables(chReasoner.getVars());
 			
 			//Add model constraints
-			for(Constraint c: relations.values()){
+			for(Constraint c: chReasoner.getRelations().values()){
 				p.addConstraints(c);	
 			}
 			
-//			for(Constraint c: productConstraint.values()){
-//				p.addConstraints(c);	
-//			}
+			//Add requirement constraints
+			for(Constraint c: requirementConstraint.values()){
+				p.addConstraints(c);	
+			}
 			
-			//Add product constraints
+					
+			//Add product constraints if the gene is set to true
 			Iterator<BitGene> iterator = gt.getChromosome().iterator();
 			while (iterator.hasNext()) {
 				if (!iterator.next().booleanValue()) {
@@ -97,18 +109,15 @@ public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements Vali
 		ChocoResult res = new ChocoResult();
 		chReasoner = (ChocoReasoner) r;
 
-
-
-		Map<String, Constraint> productConstraint = new HashMap<String, Constraint>();
-
-		for (GenericFeature f : p.getFeatures()) {
-			Constraint eq2 = Choco.eq(chReasoner.getVariables().get(f), 1);
-			String n="U_" + f.getName();
-			productConstraint.put(n,eq2);
-			cons.add(eq2);
-			consStr.add(n);
+		for (GenericFeature f : this.s.getFeatures()) {
+			IntegerVariable var = chReasoner.getVariables().get(f.getName());
+			productConstraint.put("U_" + f.getName(), Choco.eq(var, 1));
 		}
 
+		for (GenericFeature f : this.r.getFeatures()) {
+			IntegerVariable var = chReasoner.getVariables().get(f.getName());
+			requirementConstraint.put("R_" + f.getName(), Choco.eq(var, 1));
+		}
 		
 		// 1.) Define the genotype (factory) suitable
 		// for the problem.
@@ -130,6 +139,14 @@ public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements Vali
 
 		return res;
 
+	}
+
+	public static Map<String, Constraint> getRelations() {
+		return relations;
+	}
+
+	public static void setRelations(Map<String, Constraint> relations) {
+		ChocoExplainErrorEvolutionary.relations = relations;
 	}
 
 	

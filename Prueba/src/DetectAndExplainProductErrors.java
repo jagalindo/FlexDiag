@@ -15,9 +15,10 @@ public class DetectAndExplainProductErrors {
 		FAMAFeatureModel fm = (FAMAFeatureModel) reader.parseFile("models/HIS.xml");
 //		FAMAFeatureModel fm = (FAMAFeatureModel) reader.parseFile("models/test.xml");
 		Product r = new Product();
+		Product s = new Product();
+
 		r.addFeature(new Feature("LIGHT-CONTROL"));//CAUSES ERROR
 		
-		Product s = new Product();
 		s.addFeature(new Feature("POWER-LINE"));//CAUSES ERROR
 		s.addFeature(new Feature("TEMPERATURE"));
 		s.addFeature(new Feature("VIDEO"));
@@ -31,7 +32,8 @@ public class DetectAndExplainProductErrors {
 		fm.transformTo(reasoner);
 		
 		ChocoExplainErrorEvolutionary ee = new ChocoExplainErrorEvolutionary();
-		ee.setProduct(p);
+		ee.setConfiguration(s);
+		ee.setRequirement(r);
 		reasoner.ask(ee);
 		
 		System.out.println(ee.result);
