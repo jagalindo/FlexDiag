@@ -42,7 +42,7 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 	public boolean flexactive = false;
 	public int m = 1;
 	Product s,r;
-	Map<String, Constraint> result = new HashMap<String, Constraint>();
+	public Map<String, Constraint> result = new HashMap<String, Constraint>();
 
 	public void setConfiguration(Product s) {
 		// TODO Auto-generated method stub
@@ -84,12 +84,12 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 		for (GenericFeature f : this.r.getFeatures()) {
 			IntegerVariable var = chReasoner.getVariables().get(f.getName());
 			//System.out.println(var);
-			productConstraint.put("R_" + f.getName(), Choco.eq(var, 1));
+			requirementConstraint.put("R_" + f.getName(), Choco.eq(var, 1));
 		}
 
 		relations.putAll(chReasoner.getRelations());
-		relations.putAll(productConstraint);
 		relations.putAll(requirementConstraint);
+		relations.putAll(productConstraint);
 		ArrayList<String> S = new ArrayList<String>(productConstraint.keySet());
 		ArrayList<String> AC = new ArrayList<String>(relations.keySet());
 		//AC.addAll(productConstraint.keySet());

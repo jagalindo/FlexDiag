@@ -27,14 +27,14 @@ public class DetectAndExplainProductErrors {
 		ChocoReasoner reasoner;
 		
 		//Evolution
-//		reasoner = new ChocoReasoner();
-//		fm.transformTo(reasoner);
+		reasoner = new ChocoReasoner();
+		fm.transformTo(reasoner);
 		
-//		ChocoExplainErrorEvolutionary ee = new ChocoExplainErrorEvolutionary();
-//		ee.setProduct(p);
-//		reasoner.ask(ee);
-//		
-//		System.out.println(ChocoExplainErrorEvolutionary.result);
+		ChocoExplainErrorEvolutionary ee = new ChocoExplainErrorEvolutionary();
+		ee.setProduct(p);
+		reasoner.ask(ee);
+		
+		System.out.println(ee.result);
 		
 		//FMDIAG 1
 		reasoner = new ChocoReasoner();
@@ -45,20 +45,20 @@ public class DetectAndExplainProductErrors {
 		fmdiag.setRequirement(r);
 		reasoner.ask(fmdiag);
 		
-		System.out.println(ChocoExplainErrorEvolutionary.result);
+		System.out.println(fmdiag.result);
 
 		
 		//FMDIAG 2
-//		reasoner = new ChocoReasoner();
-//		fm.transformTo(reasoner);
-//
-//		ChocoExplainErrorFMDIAG fmdiag2 = new ChocoExplainErrorFMDIAG();
-//		fmdiag.setProduct(p);
-//
-//		fmdiag2.returnAllPossibeExplanations=true;
-//		reasoner.ask(fmdiag);
-//	
-//		System.out.println(ChocoExplainErrorEvolutionary.result);
+		reasoner = new ChocoReasoner();
+		fm.transformTo(reasoner);
+
+		ChocoExplainErrorFMDIAG fmdiag2 = new ChocoExplainErrorFMDIAG();
+		fmdiag.setConfiguration(s);
+		fmdiag.setRequirement(r);
+		fmdiag2.returnAllPossibeExplanations=true;
+		reasoner.ask(fmdiag);
+	
+		System.out.println(fmdiag.result);
 		
 		
 	}
