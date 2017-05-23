@@ -41,7 +41,7 @@ public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements Vali
 	static ChocoReasoner chReasoner;
 	static Map<String, Constraint> productConstraint= new HashMap<String, Constraint>();
 	static Map<String, Constraint> requirementConstraint= new HashMap<String, Constraint>();
-
+	static ArrayList<String> pc;
 	Product s,r;
 
 	public void setConfiguration(Product s) {
@@ -85,8 +85,8 @@ public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements Vali
 			//Add product constraints if the gene is set to true
 			Iterator<BitGene> iterator = gt.getChromosome().iterator();
 			while (iterator.hasNext()) {
-				if (!iterator.next().booleanValue()) {
-					p.addConstraint(cons.get(i));
+				if (iterator.next().booleanValue()) {
+					p.addConstraint(productConstraint.get(pc.get(i)));
 				}
 				i++;
 			}
@@ -100,6 +100,7 @@ public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements Vali
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {
 		}
+		//System.out.println(res);
 
 		return res;
 	}
@@ -108,10 +109,12 @@ public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements Vali
 
 		ChocoResult res = new ChocoResult();
 		chReasoner = (ChocoReasoner) r;
-
+		pc= new ArrayList<String>();	
+		
 		for (GenericFeature f : this.s.getFeatures()) {
 			IntegerVariable var = chReasoner.getVariables().get(f.getName());
 			productConstraint.put("U_" + f.getName(), Choco.eq(var, 1));
+			pc.add("U_" + f.getName());
 		}
 
 		for (GenericFeature f : this.r.getFeatures()) {
@@ -121,18 +124,21 @@ public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements Vali
 		
 		// 1.) Define the genotype (factory) suitable
 		// for the problem.
-		Factory<Genotype<BitGene>> gtf = Genotype.of(BitChromosome.of(productConstraint.size(), 0.3));
+		Factory<Genotype<BitGene>> gtf = Genotype.of(BitChromosome.of(pc.size(), 0.1));
 
 		// 3.) Create the execution environment.
 		Engine<BitGene, Integer> engine = Engine.builder(ChocoExplainErrorEvolutionary::eval, gtf)
-				.executor((Executor) Runnable::run).minimizing().build();
+				.populationSize(10)
+		//		.optimize(Optimize.MINIMUM)
+				.minimizing()
+				.executor((Executor) Runnable::run).build();
 
 		// 4.) Start the execution (evolution) and collect the result.
 		Genotype<BitGene> result = engine.stream().limit(100).collect(EvolutionResult.toBestGenotype());
 
 		for (int g = 0; g < result.getChromosome().length(); g++) {
-			if (!result.getChromosome().getGene(g).booleanValue()) {
-				String C = consStr.get(g);
+			if (result.getChromosome().getGene(g).booleanValue()) {
+				String C = pc.get(g);
 				ChocoExplainErrorEvolutionary.result.put(C,productConstraint.get(C));
 			}
 		}

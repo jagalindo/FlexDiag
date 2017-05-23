@@ -1,0 +1,1 @@
+priority;thread_strategy_replugging;volatile_set;thread_fcfs;bundle_lcfs;priority_16;location;idle_control;bundle_schedule;priority_count;minimal_set;scheduling;thread_instance;bundle_strategy_replugging;non_preemptable_threads;thread_strategy;single;

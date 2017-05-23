@@ -1,0 +1,1 @@
+separated;dispatching;priority_8;priority_cooperative;thread_fcfs;float_set;idle_guard;schedule_same_priority;single;thread_strategy_replugging;bundle_strategy;integrated;query_schedule;volatile_set;thread_schedule;priority_preemptive;global_life;location;priority_behaviour;bundle_preemption;thread_strategy;scheduler_lockable;
