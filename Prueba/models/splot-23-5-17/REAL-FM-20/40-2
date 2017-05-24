@@ -1,1 +1,0 @@
-idle_panic;priority_cooperative;idle_guard;location;bundle_fcfs;dispatching;single;priority_32;scheduling;idle_user;scheduler_lockable;idle_control;priority_behaviour;separated;global_life;thread_instance;thread_strategy;

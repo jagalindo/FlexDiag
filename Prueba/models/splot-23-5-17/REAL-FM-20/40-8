@@ -1,1 +1,0 @@
-minimal_set;priority_32;schedule_same_priority;single;priority;bundle_preemption;bundle_strategy_replugging;priority_behaviour;bundle_fcfs;query_schedule;thread;non_preemptable_threads;volatile_set;bundle_strategy;idle_user;coroutine;separated;

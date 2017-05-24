@@ -1,1 +1,0 @@
-priority_preemptive;bundle_schedule;thread_strategy;thread_lcfs;bundle_strategy_replugging;bundle_lcfs;minimal_set;idle_guard;location;dispach_method;bundle_strategy;thread_strategy_replugging;bundle_preemption;scheduling;dispatching;global_life;thread_schedule;single;coroutine;idle_control;non_preemptable_threads;thread;

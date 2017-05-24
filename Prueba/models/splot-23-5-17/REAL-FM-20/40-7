@@ -1,1 +1,0 @@
-schedule_same_priority;idle_control;bundle_lcfs;float_set;thread_fcfs;global_life;location;single;bundle_schedule;scheduler_lockable;bundle_strategy_replugging;integrated;priority_32;priority_16;non_preemptable_threads;bundle_strategy;minimal_set;
