@@ -12,32 +12,43 @@ public class Principal {
 
 	public static void main(String[] args) throws WrongFormatException {
 
-		String modelPath = args[0];
-		String productPath = args[1];
-		Integer m = Integer.parseInt(args[2]);
+		String op = args[0];// flexdiag - prods - evolutionary
 
-		//------------------------------
-		
-		XMLReader reader = new XMLReader();
-		ProductManager pman = new ProductManager();
+		if (op.equals("flexdiag")) {
 
-		FAMAFeatureModel fm = (FAMAFeatureModel) reader.parseFile(modelPath);
-		Product prod = pman.readProduct(fm, productPath);
+			String modelPath = args[1];
+			String productPath = args[2];
+			Integer m = Integer.parseInt(args[3]);
 
-		ChocoReasoner reasoner = new ChocoReasoner();
-		fm.transformTo(reasoner);
+			// ------------------------------
 
-		ChocoExplainErrorFMDIAG fmdiag = new ChocoExplainErrorFMDIAG();
-		fmdiag.setConfiguration(prod);
-		fmdiag.flexactive = true;
-		fmdiag.m = m;
+			XMLReader reader = new XMLReader();
+			ProductManager pman = new ProductManager();
 
-		reasoner.ask(fmdiag);
+			FAMAFeatureModel fm = (FAMAFeatureModel) reader.parseFile(modelPath);
+			Product prod = pman.readProduct(fm, productPath);
 
-		System.out.println(modelPath.substring(modelPath.lastIndexOf('\\')+1)+"|"+productPath.substring(productPath.lastIndexOf('\\')+1)+"|"+m+"|"+
-				fm.getFeaturesNumber()+"|"+fm.getNumberOfDependencies()+"|"+
-				reasoner.getVariables().size()+"|"+reasoner.getRelations().size()+"|"+
-				fmdiag.result.keySet());
+			ChocoReasoner reasoner = new ChocoReasoner();
+			fm.transformTo(reasoner);
+
+			ChocoExplainErrorFMDIAG fmdiag = new ChocoExplainErrorFMDIAG();
+			fmdiag.setConfiguration(prod);
+			fmdiag.flexactive = true;
+			fmdiag.m = m;
+
+			reasoner.ask(fmdiag);
+
+			System.out.println(modelPath.substring(modelPath.lastIndexOf('\\') + 1) + "|"
+					+ productPath.substring(productPath.lastIndexOf('\\') + 1) + "|" + m + "|" + fm.getFeaturesNumber()
+					+ "|" + fm.getNumberOfDependencies() + "|" + reasoner.getVariables().size() + "|"
+					+ reasoner.getRelations().size() + "|" + fmdiag.result.keySet());
+
+		}else if(op.equals("evolutionary")){
+
+		}else if(op.equals("generateProducts")){
+			
+		}
+
 	}
 
 }
