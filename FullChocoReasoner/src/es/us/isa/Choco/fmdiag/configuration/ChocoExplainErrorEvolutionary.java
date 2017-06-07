@@ -36,7 +36,7 @@ public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements Vali
 	
 	private static Map<String, Constraint> relations = null;
 
-	public static Map<String, Constraint> result = new HashMap<String, Constraint>();
+	public Map<String, Constraint> result = new HashMap<String, Constraint>();
 	
 	static ChocoReasoner chReasoner;
 	static Map<String, Constraint> productConstraint= new HashMap<String, Constraint>();
@@ -139,7 +139,7 @@ public class ChocoExplainErrorEvolutionary extends ChocoQuestion implements Vali
 		for (int g = 0; g < result.getChromosome().length(); g++) {
 			if (result.getChromosome().getGene(g).booleanValue()) {
 				String C = pc.get(g);
-				ChocoExplainErrorEvolutionary.result.put(C,productConstraint.get(C));
+				this.result.put(C,productConstraint.get(C));
 			}
 		}
 

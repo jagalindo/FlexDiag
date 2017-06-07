@@ -20,5 +20,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="choco-2.1.0-basic+old.jar"/>
+	<classpathentry kind="lib" path="org.sat4j.core.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -62,6 +62,15 @@ public class ProductManager {
 		}
 	}
 
+	public void saveShuffledProduct(Product p, String path) {
+		try (PrintWriter out = new PrintWriter(path)) {
+			Collections.shuffle((List<?>) p.getFeatures());
+			out.println(p.toString());
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void saveProducts(Collection<Product> prods, String path) {
 		try (PrintWriter out = new PrintWriter(path)) {
 			for(Product p : prods){
