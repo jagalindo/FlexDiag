@@ -24,7 +24,7 @@ minCalculation <- function(x){
 
 #------------- process ----------
 
-data = read.csv("./flex-gen.csv", header = TRUE,sep='|')
+data = read.csv("./flex-real.csv", header = TRUE,sep='|')
 data$result=str_sub(data$result, 2, str_length(data$result)-1)
 
 data$time=data$end-data$start
@@ -35,10 +35,15 @@ data$minSize <- data$min<-adply(data,1, minSizeCalculation,.expand=T)$V1
 data$min<-adply(data,1,minCalculation,.expand = T)$V1
 
 data$minimality <- data$minSize / data$resultSize
-data$accuracy<-(length(union(strsplit(as.character(data$result), ", ", fixed=TRUE),
-                     strsplit(as.character(data$result), ", ", fixed=TRUE))[[1]]))/data$minSize
+data$union <- paste(as.character(data$result),as.character(data$min), sep = ", ")
 
-plotData <- summaryBy(time + minimality + accuracy~ features + m, data = data, 
+unique(strsplit(as.character(data$union), ", ", fixed=TRUE))
+
+
+data$accuracy<-(length(union(strsplit(as.character(data$result), ", ", fixed=TRUE),
+                     strsplit(as.character(data$min), ", ", fixed=TRUE))[[1]]))/data$minSize
+
+plotData <- summaryBy(time + minimality + accuracy~ model+variables+dependencies+ m, data = data, 
                       FUN = function(x) { c(mean = mean(x)) } )
 #Print latextable
 print(xtable(plotData), include.rownames=FALSE)
