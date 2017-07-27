@@ -4,6 +4,7 @@ library(ggplot2)
 library(reshape2)
 library(stringr)
 library(xtable)
+library(htmlTable)
 
 generatePlotFlex <- function(plotData,f,lab,output){
   plot<-ggplot(plotData, aes(x = as.numeric(m), y = f))  +
