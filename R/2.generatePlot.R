@@ -4,7 +4,8 @@ library(ggplot2)
 library(reshape2)
 library(stringr)
 library(xtable)
-library(htmlTable)
+library(tableHTML)
+
 
 generatePlotFlex <- function(plotData,f,lab,output){
   plot<-ggplot(plotData, aes(x = as.numeric(m), y = f))  +
@@ -136,7 +137,8 @@ generatePlotFlex(dataFlexGenSummary,dataFlexGenSummary$accuracy.mean,"Accuracy (
 
 ## Latex table.
 print(xtable(dataFlexGenSummary), include.rownames=FALSE, file="./output/flex-gen-table.tex")
-
+htmlTable(dataFlexGenSummary)
+write_tableHTML(tableHTML(dataFlexGenSummary, rownames = FALSE, caption = 'FlexDiag with Random Models'), "./output/flex-gen-table.html", complete_html = FALSE)
 #temp<-dataFlexRealTotalSummary[which(startsWith(as.character(dataFlexRealTotalSummary$model),'R')),]
 
 #print(xtable(temp), include.rownames=FALSE, file="./output/temp.tex")
@@ -151,6 +153,7 @@ generatePlotEvol(dataEvolSummary,dataEvolSummary$accuracy.mean,"Accuracy (log sc
 
 ## Latex table.
 print(xtable(dataEvolSummary), include.rownames=FALSE, file="./output/evol-table.tex")
+write_tableHTML(tableHTML(dataEvolSummary, rownames = FALSE, caption = 'Evolutionary results'), "./output/evol-table.html", complete_html = FALSE)
 
 ######## Flexdiag vs Evolutionary 
 ##merge the data
@@ -168,6 +171,7 @@ generatePlotComp(mergedDataSummary,mergedDataSummary$accuracy.mean,"Accuracy (lo
 
 ## Latex table.
 print(xtable(mergedDataSummary), include.rownames=FALSE, file="./output/flex-vs-evol-table.tex")
+write_tableHTML(tableHTML(mergedDataSummary, rownames = FALSE, caption = 'Evolutionary vs Flexdiag'), "./output/flex-vs-evol-table.html", complete_html = FALSE)
 
 ######## Realistic
 ## Full data.
@@ -178,6 +182,7 @@ generatePlotReal(dataFlexRealTotalSummary,dataFlexRealTotalSummary$minimality.me
 generatePlotReal(dataFlexRealTotalSummary,dataFlexRealTotalSummary$accuracy.mean,"Accuracy (log scale)","./output/flex-real-accuracy.pdf")
 ## Latex table.
 print(xtable(dataFlexRealTotalSummary), include.rownames=FALSE, file="./output/flex-real-table.tex")
+write_tableHTML(tableHTML(dataFlexRealTotalSummary, rownames = FALSE, caption = 'Flexdiag with real models'), "./output/flex-real-table.html", complete_html = FALSE)
 
 ## Only Debian data.
 dataFlexRealDebianSummary<- summaryBy(dependencies+resultSize+minSize+time + minimality + accuracy~ features + m + model, data = dataFlexReal[which(dataFlexReal$model =="xenial.xml"),], FUN = function(x) { c(mean = mean(x)) } )
@@ -186,6 +191,7 @@ generatePlotDebianReal(dataFlexRealDebianSummary,dataFlexRealDebianSummary$minim
 generatePlotDebianReal(dataFlexRealDebianSummary,dataFlexRealDebianSummary$accuracy.mean,"Accuracy (log scale)","./output/flex-real-debian-accuracy.pdf")
 ## Latex table.
 print(xtable(dataFlexRealDebianSummary), include.rownames=FALSE, file="./output/flex-real-debian-table.tex")
+write_tableHTML(tableHTML(dataFlexRealDebianSummary, rownames = FALSE, caption = 'Flexdiag with Debian models'), "./output/flex-real-debian-table.html", complete_html = FALSE)
 
 ## Without Debian data.
 dataFlexRealNoDebianSummary<- summaryBy(dependencies+resultSize+minSize+time + minimality + accuracy~ features + m + model, data = dataFlexReal[which(!dataFlexReal$model =="xenial.xml"),], FUN = function(x) { c(mean = mean(x)) } )
@@ -194,3 +200,4 @@ generatePlotReal(dataFlexRealNoDebianSummary,dataFlexRealNoDebianSummary$minimal
 generatePlotReal(dataFlexRealNoDebianSummary,dataFlexRealNoDebianSummary$accuracy.mean,"Accuracy (log scale)","./output/flex-real-no-debian-accuracy.pdf")
 ## Latex table.
 print(xtable(dataFlexRealNoDebianSummary), include.rownames=FALSE, file="./output/flex-real-no-debian-table.tex")
+write_tableHTML(tableHTML(dataFlexRealNoDebianSummary, rownames = FALSE, caption = 'Flexdiag with Splot models'), "./output/flex-real-no-debian-table.html", complete_html = FALSE)

@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8">
 
-  <title>The HTML5 Herald</title>
-  <meta name="description" content="The HTML5 Herald">
+  <title>Anytime Diagnosis for Reconfiguration</title>
+  <meta name="description" content="Anytime Diagnosis for Reconfiguration">
   <meta name="author" content="SitePoint">
 
   <link rel="stylesheet" href="css/styles.css?v=1.0">
@@ -13,277 +13,102 @@
   <!--[if lt IE 9]>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
   <![endif]-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+  <style>
+  /* Add a black background color to the top navigation */
+.topnav {
+    background-color: #333;
+    overflow: hidden;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+/* Hide the link that should open and close the topnav on small screens */
+.topnav .icon {
+    display: none;
+}
+/* When the screen is less than 600 pixels wide, hide all links, except for the first one ("Home"). Show the link that contains should open and close the topnav (.icon) */
+@media screen and (max-width: 600px) {
+  .topnav a:not(:first-child) {display: none;}
+  .topnav a.icon {
+    float: right;
+    display: block;
+  }
+}
+
+/* The "responsive" class is added to the topnav with JavaScript when the user clicks on the icon. This class makes the topnav look good on small screens (display the links vertically instead of horizontally) */
+@media screen and (max-width: 600px) {
+  .topnav.responsive {position: relative;}
+  .topnav.responsive a.icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .topnav.responsive a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+}
+  </style>
+  <script>
+  /* Toggle between adding and removing the "responsive" class to topnav when the user clicks on the icon */
+function myFunction() {
+    var x = document.getElementById("myTopnav");
+    if (x.className === "topnav") {
+        x.className += " responsive";
+    } else {
+        x.className = "topnav";
+    }
+}
+  </script
 </head>
 
 <body>
+<div class="topnav" id="myTopnav">
+  <a href="#flexdiag">Flexdiag</a>
+  <a href="#random">Random Models Results</a>
+  <a href="#real">Real Models Results</a>
+  <a href="#evolutionary">Evolutionary Results</a>
+  <a href="#vs">Comparison Results</a>
+  <a href="#github">Github site</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">&#9776;</a>
+</div>
+ <header id="flexdiag">
+    <h1>Anytime Diagnosis for Reconfiguration</h1>
+	<h2>Alexander Felfernig, Rouven Walter, José Galindo Duarte, David Benavides, Seda Polat Erdeniz, Muslum Atas and Stefan Reiterer</h2>
+	<p>Many domains require scalable algorithms that help to determine diagnoses efficiently and often within predefined time limits. Anytime diagnosis is able to determine solutions in such a way and thus is especially useful in real-time scenarios such as production scheduling, robot control, and communication networks management where diagnosis and corresponding reconfiguration capabilities play a major role. Anytime diagnosis in many cases comes along with a trade-off between diagnosis quality and the efficiency of diagnostic reasoning. In this paper we introduce and analyze FlexDiag  which is an anytime direct diagnosis approach. We evaluate the algorithm with regard to performance and diagnosis quality using a configuration benchmark from the domain of feature models and an industrial configuration knowledge base from the automotive domain. Results show that FlexDiag helps to significantly increase the performance of direct diagnosis search with corresponding quality tradeoffs in terms of minimality and accuracy.</p>
+</header>
+<div id="random" data-include="flex-gen-table"></div>
+<div id="real" data-include="flex-real-table"></div>
+<div id="evolutionary" data-include="evol-table"></div>
+<div id="vs" data-include="flex-vs-evol-table"></div>
 
-
-<table style="border-collapse:collapse;" class=table_5120 border=1>
-<thead>
-<tr>
-  <th id="tableHTML_header_1">features</th>
-  <th id="tableHTML_header_2">m</th>
-  <th id="tableHTML_header_3">dependencies.mean</th>
-  <th id="tableHTML_header_4">resultSize.mean</th>
-  <th id="tableHTML_header_5">minSize.mean</th>
-  <th id="tableHTML_header_6">time.mean</th>
-  <th id="tableHTML_header_7">minimality.mean</th>
-  <th id="tableHTML_header_8">accuracy.mean</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td id="tableHTML_column_1">50</td>
-  <td id="tableHTML_column_2">1</td>
-  <td id="tableHTML_column_3">19.4</td>
-  <td id="tableHTML_column_4">9.4</td>
-  <td id="tableHTML_column_5">9.4</td>
-  <td id="tableHTML_column_6">393.873333333333</td>
-  <td id="tableHTML_column_7">1</td>
-  <td id="tableHTML_column_8">1</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">50</td>
-  <td id="tableHTML_column_2">2</td>
-  <td id="tableHTML_column_3">19.4</td>
-  <td id="tableHTML_column_4">10.12</td>
-  <td id="tableHTML_column_5">9.4</td>
-  <td id="tableHTML_column_6">319.026666666667</td>
-  <td id="tableHTML_column_7">0.822888888888889</td>
-  <td id="tableHTML_column_8">1</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">50</td>
-  <td id="tableHTML_column_2">4</td>
-  <td id="tableHTML_column_3">19.4</td>
-  <td id="tableHTML_column_4">11</td>
-  <td id="tableHTML_column_5">9.4</td>
-  <td id="tableHTML_column_6">245.506666666667</td>
-  <td id="tableHTML_column_7">0.719111111111111</td>
-  <td id="tableHTML_column_8">0.986666666666667</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">50</td>
-  <td id="tableHTML_column_2">6</td>
-  <td id="tableHTML_column_3">19.4</td>
-  <td id="tableHTML_column_4">11.8666666666667</td>
-  <td id="tableHTML_column_5">9.4</td>
-  <td id="tableHTML_column_6">214.04</td>
-  <td id="tableHTML_column_7">0.679111111111111</td>
-  <td id="tableHTML_column_8">0.986666666666667</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">50</td>
-  <td id="tableHTML_column_2">10</td>
-  <td id="tableHTML_column_3">19.4</td>
-  <td id="tableHTML_column_4">12.8666666666667</td>
-  <td id="tableHTML_column_5">9.4</td>
-  <td id="tableHTML_column_6">192.72</td>
-  <td id="tableHTML_column_7">0.656162393162393</td>
-  <td id="tableHTML_column_8">0.986666666666667</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">100</td>
-  <td id="tableHTML_column_2">1</td>
-  <td id="tableHTML_column_3">39</td>
-  <td id="tableHTML_column_4">16.7333333333333</td>
-  <td id="tableHTML_column_5">16.7333333333333</td>
-  <td id="tableHTML_column_6">811.48</td>
-  <td id="tableHTML_column_7">1</td>
-  <td id="tableHTML_column_8">0.986666666666667</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">100</td>
-  <td id="tableHTML_column_2">2</td>
-  <td id="tableHTML_column_3">39</td>
-  <td id="tableHTML_column_4">19.76</td>
-  <td id="tableHTML_column_5">16.7333333333333</td>
-  <td id="tableHTML_column_6">657.62</td>
-  <td id="tableHTML_column_7">0.777908054255819</td>
-  <td id="tableHTML_column_8">0.989454191033138</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">100</td>
-  <td id="tableHTML_column_2">4</td>
-  <td id="tableHTML_column_3">39</td>
-  <td id="tableHTML_column_4">22.2066666666667</td>
-  <td id="tableHTML_column_5">16.7333333333333</td>
-  <td id="tableHTML_column_6">493.06</td>
-  <td id="tableHTML_column_7">0.688693218854473</td>
-  <td id="tableHTML_column_8">0.98162962962963</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">100</td>
-  <td id="tableHTML_column_2">6</td>
-  <td id="tableHTML_column_3">39</td>
-  <td id="tableHTML_column_4">23.4533333333333</td>
-  <td id="tableHTML_column_5">16.7333333333333</td>
-  <td id="tableHTML_column_6">399.32</td>
-  <td id="tableHTML_column_7">0.635738334001735</td>
-  <td id="tableHTML_column_8">0.971824561403509</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">100</td>
-  <td id="tableHTML_column_2">10</td>
-  <td id="tableHTML_column_3">39</td>
-  <td id="tableHTML_column_4">26.0666666666667</td>
-  <td id="tableHTML_column_5">16.7333333333333</td>
-  <td id="tableHTML_column_6">325.98</td>
-  <td id="tableHTML_column_7">0.581653021442495</td>
-  <td id="tableHTML_column_8">1</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">500</td>
-  <td id="tableHTML_column_2">1</td>
-  <td id="tableHTML_column_3">195</td>
-  <td id="tableHTML_column_4">117.4</td>
-  <td id="tableHTML_column_5">117.4</td>
-  <td id="tableHTML_column_6">7728.43333333333</td>
-  <td id="tableHTML_column_7">1</td>
-  <td id="tableHTML_column_8">1</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">500</td>
-  <td id="tableHTML_column_2">2</td>
-  <td id="tableHTML_column_3">195</td>
-  <td id="tableHTML_column_4">131.3</td>
-  <td id="tableHTML_column_5">117.4</td>
-  <td id="tableHTML_column_6">5190.42666666667</td>
-  <td id="tableHTML_column_7">0.867799672689887</td>
-  <td id="tableHTML_column_8">0.984331856589019</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">500</td>
-  <td id="tableHTML_column_2">4</td>
-  <td id="tableHTML_column_3">195</td>
-  <td id="tableHTML_column_4">133.04</td>
-  <td id="tableHTML_column_5">117.4</td>
-  <td id="tableHTML_column_6">3688.38666666667</td>
-  <td id="tableHTML_column_7">0.845167199982318</td>
-  <td id="tableHTML_column_8">0.960700619923915</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">500</td>
-  <td id="tableHTML_column_2">6</td>
-  <td id="tableHTML_column_3">195</td>
-  <td id="tableHTML_column_4">136.04</td>
-  <td id="tableHTML_column_5">117.4</td>
-  <td id="tableHTML_column_6">3060.08</td>
-  <td id="tableHTML_column_7">0.819578332310404</td>
-  <td id="tableHTML_column_8">0.966950428238701</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">500</td>
-  <td id="tableHTML_column_2">10</td>
-  <td id="tableHTML_column_3">195</td>
-  <td id="tableHTML_column_4">145.886666666667</td>
-  <td id="tableHTML_column_5">117.4</td>
-  <td id="tableHTML_column_6">1739.18666666667</td>
-  <td id="tableHTML_column_7">0.781319880719881</td>
-  <td id="tableHTML_column_8">0.993342348433626</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">1000</td>
-  <td id="tableHTML_column_2">1</td>
-  <td id="tableHTML_column_3">390</td>
-  <td id="tableHTML_column_4">216.533333333333</td>
-  <td id="tableHTML_column_5">216.533333333333</td>
-  <td id="tableHTML_column_6">26248.5733333333</td>
-  <td id="tableHTML_column_7">1</td>
-  <td id="tableHTML_column_8">1</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">1000</td>
-  <td id="tableHTML_column_2">2</td>
-  <td id="tableHTML_column_3">390</td>
-  <td id="tableHTML_column_4">243.36</td>
-  <td id="tableHTML_column_5">216.533333333333</td>
-  <td id="tableHTML_column_6">13468.06</td>
-  <td id="tableHTML_column_7">0.852269551527947</td>
-  <td id="tableHTML_column_8">0.981827332703177</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">1000</td>
-  <td id="tableHTML_column_2">4</td>
-  <td id="tableHTML_column_3">390</td>
-  <td id="tableHTML_column_4">266.493333333333</td>
-  <td id="tableHTML_column_5">216.533333333333</td>
-  <td id="tableHTML_column_6">7891.3</td>
-  <td id="tableHTML_column_7">0.777999280070664</td>
-  <td id="tableHTML_column_8">0.982991390701913</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">1000</td>
-  <td id="tableHTML_column_2">6</td>
-  <td id="tableHTML_column_3">390</td>
-  <td id="tableHTML_column_4">272.733333333333</td>
-  <td id="tableHTML_column_5">216.533333333333</td>
-  <td id="tableHTML_column_6">6287.08</td>
-  <td id="tableHTML_column_7">0.757124387900755</td>
-  <td id="tableHTML_column_8">0.979570220760323</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">1000</td>
-  <td id="tableHTML_column_2">10</td>
-  <td id="tableHTML_column_3">390</td>
-  <td id="tableHTML_column_4">287.92</td>
-  <td id="tableHTML_column_5">216.533333333333</td>
-  <td id="tableHTML_column_6">4189.52</td>
-  <td id="tableHTML_column_7">0.736249303645353</td>
-  <td id="tableHTML_column_8">0.982462506200656</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">2000</td>
-  <td id="tableHTML_column_2">1</td>
-  <td id="tableHTML_column_3">780</td>
-  <td id="tableHTML_column_4">414.933333333333</td>
-  <td id="tableHTML_column_5">414.933333333333</td>
-  <td id="tableHTML_column_6">116387.086666667</td>
-  <td id="tableHTML_column_7">1</td>
-  <td id="tableHTML_column_8">1</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">2000</td>
-  <td id="tableHTML_column_2">2</td>
-  <td id="tableHTML_column_3">780</td>
-  <td id="tableHTML_column_4">454.046666666667</td>
-  <td id="tableHTML_column_5">414.933333333333</td>
-  <td id="tableHTML_column_6">47851.1533333333</td>
-  <td id="tableHTML_column_7">0.856055085037027</td>
-  <td id="tableHTML_column_8">0.980674474013972</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">2000</td>
-  <td id="tableHTML_column_2">4</td>
-  <td id="tableHTML_column_3">780</td>
-  <td id="tableHTML_column_4">492.2</td>
-  <td id="tableHTML_column_5">414.933333333333</td>
-  <td id="tableHTML_column_6">22740.5533333333</td>
-  <td id="tableHTML_column_7">0.773001564741282</td>
-  <td id="tableHTML_column_8">0.975091657102017</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">2000</td>
-  <td id="tableHTML_column_2">6</td>
-  <td id="tableHTML_column_3">780</td>
-  <td id="tableHTML_column_4">506.44</td>
-  <td id="tableHTML_column_5">414.933333333333</td>
-  <td id="tableHTML_column_6">18755.6533333333</td>
-  <td id="tableHTML_column_7">0.746597951333495</td>
-  <td id="tableHTML_column_8">0.971217921042489</td>
-</tr>
-<tr>
-  <td id="tableHTML_column_1">2000</td>
-  <td id="tableHTML_column_2">10</td>
-  <td id="tableHTML_column_3">780</td>
-  <td id="tableHTML_column_4">541.226666666667</td>
-  <td id="tableHTML_column_5">414.933333333333</td>
-  <td id="tableHTML_column_6">10368.8733333333</td>
-  <td id="tableHTML_column_7">0.718867668117303</td>
-  <td id="tableHTML_column_8">0.975606570340307</td>
-</tr>
-</tbody>
-</table>
+<script>
+  $(function(){
+    var includes = $('[data-include]');
+    jQuery.each(includes, function(){
+      var file = 'tables/' + $(this).data('include') + '.html';
+      $(this).load(file);
+    });
+  });
+</script>
 </body>
 </html>
 
