@@ -70,7 +70,9 @@
 .topnav {
   position: fixed;
 }
-
+#content {
+  margin-top: 100px;
+}
   </style>
   <script>
   /* Toggle between adding and removing the "responsive" class to topnav when the user clicks on the icon */
@@ -95,6 +97,7 @@ function myFunction() {
   <a href="https://github.com/jagalindo/FlexDiag">Github site</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">&#9776;</a>
 </div>
+<div id="content">
  <header id="flexdiag">
     <h1>Anytime Diagnosis for Reconfiguration</h1>
 	<h2>Alexander Felfernig, Rouven Walter, José Galindo Duarte, David Benavides, Seda Polat Erdeniz, Muslum Atas and Stefan Reiterer</h2>
@@ -104,7 +107,7 @@ function myFunction() {
 <div id="real" data-include="flex-real-table"></div>
 <div id="evolutionary" data-include="evol-table"></div>
 <div id="vs" data-include="flex-vs-evol-table"></div>
-
+</div>
 <script>
   $(function(){
     var includes = $('[data-include]');
