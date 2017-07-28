@@ -88,7 +88,6 @@ function myFunction() {
 </head>
 
 <body>
-<div id="content">
 
 <div class="topnav" id="myTopnav">
   <a href="#flexdiag">Flexdiag</a>
@@ -99,11 +98,13 @@ function myFunction() {
   <a href="https://github.com/jagalindo/FlexDiag">Github site</a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">&#9776;</a>
 </div>
- <header id="flexdiag">
+<div id="content">
+
+ <div id="flexdiag">
     <h1>Anytime Diagnosis for Reconfiguration</h1>
 	<h2>Alexander Felfernig, Rouven Walter, José Galindo Duarte, David Benavides, Seda Polat Erdeniz, Muslum Atas and Stefan Reiterer</h2>
 	<p>Many domains require scalable algorithms that help to determine diagnoses efficiently and often within predefined time limits. Anytime diagnosis is able to determine solutions in such a way and thus is especially useful in real-time scenarios such as production scheduling, robot control, and communication networks management where diagnosis and corresponding reconfiguration capabilities play a major role. Anytime diagnosis in many cases comes along with a trade-off between diagnosis quality and the efficiency of diagnostic reasoning. In this paper we introduce and analyze FlexDiag  which is an anytime direct diagnosis approach. We evaluate the algorithm with regard to performance and diagnosis quality using a configuration benchmark from the domain of feature models and an industrial configuration knowledge base from the automotive domain. Results show that FlexDiag helps to significantly increase the performance of direct diagnosis search with corresponding quality tradeoffs in terms of minimality and accuracy.</p>
-</header>
+</div>
 <div id="random" data-include="flex-gen-table"></div>
 <div id="real" data-include="flex-real-table"></div>
 <div id="evolutionary" data-include="evol-table"></div>
