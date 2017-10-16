@@ -123,9 +123,18 @@ generatePlotDebianReal <- function(plotData,f,lab,output){
 dataFlexGen = read.csv("./processedData/flex-gen.csv", header = TRUE,sep='|')
 dataEvol = read.csv("./processedData/evol.csv", header = TRUE,sep='|')
 dataFlexReal = read.csv("./processedData/flex-real.csv", header = TRUE,sep='|')
+dataFlexTiny = read.csv("./processedData/tiny.csv", header = TRUE,sep='|')
 ##remove bad data 5000 missing m=1
 dataFlexGen<-dataFlexGen[which(!dataFlexGen$features==5000),]
 dataEvol<-dataEvol[which(!dataEvol$features==5000),]
+
+
+######## Flexdiag Tiny model individual.
+dataFlexTinySummary <- summaryBy(dependencies+product+resultSize+minSize+time + minimality + accuracy~ features + m, data = dataFlexTiny, FUN = function(x) { c(mean = mean(x)) } )
+
+## Latex table.
+print(xtable(dataFlexTinySummary), include.rownames=FALSE, file="./output/flex-tiny-table.tex")
+write_tableHTML(tableHTML(dataFlexTinySummary, rownames = FALSE, caption = 'FlexDiag with Tiny Models'), "./output/flex-tiny-table.html", complete_html = FALSE)
 
 
 ######## Flexdiag Random model individual.

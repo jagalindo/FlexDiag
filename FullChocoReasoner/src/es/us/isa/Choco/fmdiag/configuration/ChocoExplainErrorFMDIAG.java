@@ -62,10 +62,13 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 		relations = new HashMap<String, Constraint>();
 
 		Map<String, Constraint> productConstraint = new HashMap<String, Constraint>();
+		ArrayList<String> feats= new ArrayList<String>();
 		for (GenericFeature f : this.s.getFeatures()) {
 			IntegerVariable var = chReasoner.getVariables().get(f.getName());
 			//System.out.println(var);
-			productConstraint.put("U_" + f.getName(), Choco.eq(var, 1));
+			String name="U_" + f.getName();
+			productConstraint.put(name, Choco.eq(var, 1));
+			feats.add(name);
 		}
 
 
@@ -79,7 +82,8 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 		relations.putAll(chReasoner.getRelations());
 		relations.putAll(requirementConstraint);
 		relations.putAll(productConstraint);
-		ArrayList<String> S = new ArrayList<String>(productConstraint.keySet());
+		ArrayList<String> S = new ArrayList<String>(feats);
+		//System.out.println("Order of S: "+S);
 		ArrayList<String> AC = new ArrayList<String>(relations.keySet());
 		//AC.addAll(productConstraint.keySet());
 

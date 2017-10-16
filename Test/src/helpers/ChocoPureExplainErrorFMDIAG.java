@@ -15,8 +15,6 @@ import choco.kernel.model.Model;
 import choco.kernel.model.constraints.Constraint;
 import choco.kernel.model.variables.integer.IntegerVariable;
 import choco.kernel.solver.Solver;
-import es.us.isa.ChocoReasoner.ChocoQuestion;
-import es.us.isa.FAMA.Reasoner.questions.ValidConfigurationErrorsQuestion;
 import es.us.isa.FAMA.models.featureModel.GenericFeature;
 import es.us.isa.FAMA.models.featureModel.Product;
 
@@ -53,11 +51,14 @@ public class ChocoPureExplainErrorFMDIAG  {
 		// solve the problem y fmdiag
 		relations = new HashMap<String, Constraint>();
 
+		ArrayList<String> feats= new ArrayList<String>();
 		Map<String, Constraint> productConstraint = new HashMap<String, Constraint>();
 		for (GenericFeature f : this.s.getFeatures()) {
 			IntegerVariable var = chReasoner.getVariables().get(Integer.parseInt(f.getName()));
-			//System.out.println(var);
-			productConstraint.put("U_" + f.getName(), Choco.eq(var, 1));
+			String name="U_" + f.getName();
+			productConstraint.put(name, Choco.eq(var, 1));
+			feats.add(name);
+		
 		}
 
 
@@ -72,7 +73,7 @@ public class ChocoPureExplainErrorFMDIAG  {
 		}
 		relations.putAll(requirementConstraint);
 		relations.putAll(productConstraint);
-		ArrayList<String> S = new ArrayList<String>(productConstraint.keySet());
+		ArrayList<String> S = new ArrayList<String>(feats);
 		ArrayList<String> AC = new ArrayList<String>(relations.keySet());
 		//AC.addAll(productConstraint.keySet());
 

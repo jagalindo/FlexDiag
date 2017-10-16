@@ -40,7 +40,6 @@ public class Principal {
 			ChocoExplainErrorFMDIAG fmdiag = new ChocoExplainErrorFMDIAG();
 			fmdiag.setConfiguration(prod);
 			fmdiag.setRequirement(new Product());
-
 			fmdiag.flexactive = true;
 			fmdiag.m = m;
 			long start = System.currentTimeMillis();
@@ -48,7 +47,7 @@ public class Principal {
 			long end = System.currentTimeMillis();
 
 			System.out.println(modelPath.substring(modelPath.lastIndexOf(File.separator) + 1) + "|"
-					+ productPath.substring(productPath.lastIndexOf(File.separator) + 1) + "|" + m + "|"
+					+ productPath.substring(productPath.lastIndexOf(File.separator) + 1) + "|" + prod+ "|" + m + "|"
 					+ fm.getFeaturesNumber() + "|" + fm.getNumberOfDependencies() + "|" + reasoner.getVariables().size()
 					+ "|" + reasoner.getRelations().size() + "|" +start+ "|"+ end+"|"+ fmdiag.result.keySet());
 
@@ -73,7 +72,7 @@ public class Principal {
 			long end = System.currentTimeMillis();
 
 			System.out.println(modelPath.substring(modelPath.lastIndexOf(File.separator) + 1) + "|"
-					+ productPath.substring(productPath.lastIndexOf(File.separator) + 1) + "|" + fm.getFeaturesNumber()
+					+ productPath.substring(productPath.lastIndexOf(File.separator) + 1) + "|" +prod+ "|" + fm.getFeaturesNumber()
 					+ "|" + fm.getNumberOfDependencies() + "|" + reasoner.getVariables().size() + "|"
 					+ reasoner.getRelations().size() + "|" +start+ "|"+ end+"|"+ evol.result.keySet());
 
@@ -87,17 +86,17 @@ public class Principal {
 					XMLReader reader = new XMLReader();
 
 					FAMAFeatureModel fm = (FAMAFeatureModel) reader.parseFile(f.getPath());
-					int[] percentages = { 10, 20, 30, 40, 50 };
+					int[] percentages = { 10, 20, 30, 40, 50, 100 };
 					for (int p : percentages) {
 						int psize = p * fm.getFeaturesNumber() / 100;
 						File newDir = new File(dir.getPath() + File.separator + newDirName + File.separator);
 						newDir.mkdirs();
 
 						for (int i = 0; i < 10; i++) {
-							Product generateProduct = man.generateProduct(fm, psize);
+							Product generateProduct = man.generateProductUsingExcludes(fm, psize);
 							for (int j = 0; j < 10; j++) {
 								man.saveShuffledProduct(generateProduct,
-										newDir.getPath() + File.separator + p + "-" + i + "-" + j);
+										newDir.getPath() + File.separator +newDirName+"-"+ p + "-" + i + "-" + j+".prod");
 								System.out.println("Generating and saving " + generateProduct);
 
 							}
@@ -117,14 +116,15 @@ public class Principal {
 					XMLReader reader = new XMLReader();
 
 					FAMAFeatureModel fm = (FAMAFeatureModel) reader.parseFile(f.getPath());
-					int[] percentages = { 10, 30, 50 };
+					int[] percentages = { 10, 30, 50,100 };
 					for (int p : percentages) {
 						int psize = p * fm.getFeaturesNumber() / 100;
 						File newDir = new File(dir.getPath() + File.separator + newDirName + File.separator);
 						newDir.mkdirs();
-						Product generateProduct = man.generateProduct(fm, psize);
+						Product generateProduct = man.generateProductUsingExcludes(fm, psize);
 						for (int j = 0; j < 10; j++) {
-							man.saveShuffledProduct(generateProduct, newDir.getPath() + File.separator + p + "-" + j);
+							man.saveShuffledProduct(generateProduct,
+									newDir.getPath() + File.separator +newDirName+"-"+ p + "-" + j+".prod");
 							System.out.println("Generating and saving " + generateProduct);
 
 						}
@@ -149,10 +149,10 @@ public class Principal {
 						newDir.mkdirs();
 
 						for (int i = 0; i < 10; i++) {
-							Product generateProduct = man.generateProduct(m, psize);
+							Product generateProduct = man.generateProductUsingExcludes(m, psize);
 							for (int j = 0; j < 10; j++) {
 								man.saveShuffledProduct(generateProduct,
-										newDir.getPath() + File.separator + p + "-" + i + "-" + j);
+										newDir.getPath() + File.separator +newDirName+"-"+ p + "-" + i + "-" + j+".prod");
 								System.out.println("Generating and saving " + generateProduct);
 
 							}
@@ -171,16 +171,17 @@ public class Principal {
 					String newDirName = f.getName().replaceAll(".cnf", "");
 					ChocoModel m = new ChocoModel();
 					m.parseFile(f.getPath());
-					int[] percentages = { 10, 30, 50 };
+					int[] percentages = { 10, 30, 50,100 };
 					for (int p : percentages) {
 						int psize = p * m.getVariables().size() / 100;
 						File newDir = new File(dir.getPath() + File.separator + newDirName + File.separator);
 						newDir.mkdirs();
 
-						Product generateProduct = man.generateProduct(m, psize);
+						Product generateProduct = man.generateProductUsingExcludes(m, psize);
 						for (int j = 0; j < 10; j++) {
+							
 							man.saveShuffledProduct(generateProduct,
-									newDir.getPath() + File.separator + p + "-" + j);
+									newDir.getPath() + File.separator +newDirName+"-"+ p + "-"  + j+".prod");
 							System.out.println("Generating and saving " + generateProduct);
 
 						}

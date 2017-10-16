@@ -16,6 +16,7 @@ minSizeCalculation <- function(x){
   return(result)
 }
 
+
 minCalculation <- function(x){
   subset <- subset(data, model==x$model & product == x$product)
   subset <- subset[ which(subset$resultSize==x$minSize), ]
@@ -32,14 +33,15 @@ uniqueCount <- function(x){
 
 
 #------------- process ----------
-args <- commandArgs(trailingOnly = TRUE)
-#args<-c("flex-gen")
+#args <- commandArgs(trailingOnly = TRUE)
+args<-c("tiny")
 inputName<-paste("./sourceData/",args[1],".csv", sep = "")
 outputName<-paste("./processedData/",args[1],".csv", sep = "")
 
 ###reading the results
 data = read.csv(inputName, header = TRUE,sep='|', stringsAsFactors = FALSE)
-data$result=str_sub(data$result, 2, str_length(data$result)-1)
+#data$result=str_sub(data$result, 2, str_length(data$result)-1)
+data$result<-gsub('^.|.$', '', data$result)
 ###generating duration and number of results
 data$end<-as.numeric(as.character(data$end))
 data$start<-as.numeric(as.character(data$start))
