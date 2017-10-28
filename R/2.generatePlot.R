@@ -119,22 +119,47 @@ generatePlotDebianReal <- function(plotData,f,lab,output){
   
 }
 
+minSizeCalculation <- function(x){
+  subset <- dataFlexAutoSummary[ which(data$model==x$model ), ] 
+  
+  ##force to use fmdiag m=1 for minimal diagnossis avoiding non-complete results from evolutionary
+  #si tenemos ejecutado con m=1 lo uso, si no el minimo y listo
+  if(nrow(subset[ which(subset$m==1), ])>0){
+    subset <- subset[ which(subset$m==1), ]
+  }
+  result <-  min(subset$resultSize)
+  return(result)
+}
+
 ######## Read data  
 dataFlexGen = read.csv("./processedData/flex-gen.csv", header = TRUE,sep='|')
 dataEvol = read.csv("./processedData/evol.csv", header = TRUE,sep='|')
 dataFlexReal = read.csv("./processedData/flex-real.csv", header = TRUE,sep='|')
-dataFlexTiny = read.csv("./processedData/tiny.csv", header = TRUE,sep='|')
+dataFlexAutoSummary = read.csv("./processedData/automotive.csv", header = TRUE,sep='|')
+
+#dataFlexTiny = read.csv("./processedData/tiny.csv", header = TRUE,sep='|')
 ##remove bad data 5000 missing m=1
+dataFlexGen <- subset(dataFlexGen, select = -c(productDesc) )
+dataFlexReal <- subset(dataFlexReal, select = -c(productDesc) )
+
 dataFlexGen<-dataFlexGen[which(!dataFlexGen$features==5000),]
 dataEvol<-dataEvol[which(!dataEvol$features==5000),]
 
 
 ######## Flexdiag Tiny model individual.
-dataFlexTinySummary <- summaryBy(dependencies+product+resultSize+minSize+time + minimality + accuracy~ features + m, data = dataFlexTiny, FUN = function(x) { c(mean = mean(x)) } )
+#dataFlexTinySummary <- summaryBy(dependencies+product+resultSize+minSize+time + minimality + accuracy~ features + m, data = dataFlexTiny, FUN = function(x) { c(mean = mean(x)) } )
 
 ## Latex table.
-print(xtable(dataFlexTinySummary), include.rownames=FALSE, file="./output/flex-tiny-table.tex")
-write_tableHTML(tableHTML(dataFlexTinySummary, rownames = FALSE, caption = 'FlexDiag with Tiny Models'), "./output/flex-tiny-table.html", complete_html = FALSE)
+#print(xtable(dataFlexTinySummary), include.rownames=FALSE, file="./output/flex-tiny-table.tex")
+#write_tableHTML(tableHTML(dataFlexTinySummary, rownames = FALSE, caption = 'FlexDiag with Tiny Models'), "./output/flex-tiny-table.html", complete_html = FALSE)
+
+######## Flexdiag Automotive model individual.
+dataFlexAutoSummary <- summaryBy(time + minimality + accuracy~ model + m + variables+relations, data = dataFlexAutoSummary, FUN = function(x) { c(mean = mean(x)) } )
+
+## Latex table.
+print(xtable(dataFlexAutoSummary), include.rownames=FALSE, file="./output/flex-auto-table.tex")
+write_tableHTML(tableHTML(dataFlexAutoSummary, rownames = FALSE, caption = 'FlexDiag with Automotive Models'), "./output/flex-auto-table.html", complete_html = FALSE)
+
 
 
 ######## Flexdiag Random model individual.
@@ -146,7 +171,7 @@ generatePlotFlex(dataFlexGenSummary,dataFlexGenSummary$accuracy.mean,"Accuracy (
 
 ## Latex table.
 print(xtable(dataFlexGenSummary), include.rownames=FALSE, file="./output/flex-gen-table.tex")
-htmlTable(dataFlexGenSummary)
+#htmlTable(dataFlexGenSummary)
 write_tableHTML(tableHTML(dataFlexGenSummary, rownames = FALSE, caption = 'FlexDiag with Random Models'), "./output/flex-gen-table.html", complete_html = FALSE)
 #temp<-dataFlexRealTotalSummary[which(startsWith(as.character(dataFlexRealTotalSummary$model),'R')),]
 
@@ -189,6 +214,9 @@ dataFlexRealTotalSummary <- summaryBy(dependencies+resultSize+minSize+time + min
 generatePlotReal(dataFlexRealTotalSummary,dataFlexRealTotalSummary$time.mean,"Time in milliseconds (log scale)","./output/flex-real-time.pdf")
 generatePlotReal(dataFlexRealTotalSummary,dataFlexRealTotalSummary$minimality.mean,"Minimality (log scale)","./output/flex-real-minimality.pdf")
 generatePlotReal(dataFlexRealTotalSummary,dataFlexRealTotalSummary$accuracy.mean,"Accuracy (log scale)","./output/flex-real-accuracy.pdf")
+
+#dataFlexRealTotalSummary<-arrange(dataFlexRealTotalSummary, model, m)
+#dataFlexRealTotalSummary<-dataFlexRealTotalSummary[which(startsWith(as.character(dataFlexRealTotalSummary$model),"REAL")),]
 ## Latex table.
 print(xtable(dataFlexRealTotalSummary), include.rownames=FALSE, file="./output/flex-real-table.tex")
 write_tableHTML(tableHTML(dataFlexRealTotalSummary, rownames = FALSE, caption = 'Flexdiag with real models'), "./output/flex-real-table.html", complete_html = FALSE)
