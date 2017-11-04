@@ -1,4 +1,4 @@
-package es.us.isa.Choco.fmdiag.model;
+package es.us.isa.Choco.fmdiag;
 
 import static choco.Choco.eq;
 
@@ -15,7 +15,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import choco.cp.model.CPModel;
 import choco.cp.solver.CPSolver;
@@ -24,7 +23,6 @@ import choco.kernel.model.constraints.Constraint;
 import choco.kernel.model.variables.integer.IntegerExpressionVariable;
 import choco.kernel.model.variables.integer.IntegerVariable;
 import choco.kernel.solver.Solver;
-import es.us.isa.Choco.fmdiag.model.ChocoExplainErrorFMDIAGParalell.diagThreads;
 import es.us.isa.ChocoReasoner.ChocoQuestion;
 import es.us.isa.ChocoReasoner.ChocoReasoner;
 import es.us.isa.ChocoReasoner.ChocoResult;
@@ -50,8 +48,18 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Ex
 
 	ExecutorService executorService = Executors.newCachedThreadPool();
 
-	public PerformanceResult answer(Reasoner r) throws FAMAException {
+	////////////
+	public HashMap<Error, LinkedList<String>> errors_explanations = new HashMap<Error, LinkedList<String>>();
 
+	////////////For Parallel FlexDiag...
+	public int m=1;
+	public boolean flexactive=false;
+
+	public ChocoExplainErrorFMDIAGParalell(int m){
+		this.m = m;
+	}
+	
+	public PerformanceResult answer(Reasoner r) throws FAMAException {
 		ChocoResult res = new ChocoResult();
 		chReasoner = (ChocoReasoner) r;
 
@@ -67,8 +75,12 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Ex
 		while (itE.hasNext()) {
 			// crear una lista de constraints, que impondremos segun las
 			// observaciones
+			
 			Error e = itE.next();
+			explanations  =  new LinkedList<String>();
 
+//			e.getObservation()
+			
 			// System.out.println("Explanations for "+e.toString());
 			Map<String, Constraint> cons4obs = new HashMap<String, Constraint>();
 			Observation obs = e.getObservation();
@@ -80,6 +92,7 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Ex
 			while (its.hasNext()) {
 				int i = 0;
 				try {
+					@SuppressWarnings("unchecked")
 					Entry<? extends VariabilityElement, Object> entry = (Entry<? extends VariabilityElement, Object>) its
 							.next();
 					Constraint cn;
@@ -110,6 +123,7 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Ex
 				// System.out.println("Relation "+fmdiag.get(0)+" is causing the
 				// conflict");
 				explanations = fmdiag;
+				errors_explanations.put(e, (LinkedList<String>) explanations);
 			} else {
 				List<String> allExpl = new LinkedList<String>();
 				List<String> fmdiag = fmdiag(S, AC);
@@ -119,8 +133,10 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Ex
 					AC.removeAll(fmdiag);
 					fmdiag = fmdiag(S, AC);
 				}
-				explanations = fmdiag;
-				// for(String str:allExpl){
+				explanations.addAll(allExpl);
+				errors_explanations.put(e, (LinkedList<String>) explanations);
+
+					// for(String str:allExpl){
 				// System.out.println("Relation "+str+" is causing the
 				// conflict");
 				// }
@@ -167,21 +183,39 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Ex
 			this.numberOfSplits=numberOfSplits;
 		}
 		
-		@Override
 		public List<String> call() throws Exception {
-			//System.out.println("Executando "+D+","+S+","+AC);
 			//if(!isConsistent(D)&&isConsistent(AC)){
 			if(isConsistent(AC)){
 				return new ArrayList<String>();
 			}
-			if(S.size()==1){
-				return S;
+			
+			if(flexactive){
+				if(S.size()<=m){
+				   return S;
+				}
+			}else{				
+				if(S.size()==1){
+				   return S;
+				}
 			}
+			
+	//		System.out.println("Executando "+ D + "," + S + "," + AC);
+			
 			List<List<String>> outLists= new LinkedList<List<String>>();
 			//Hay una optimizacion a realizar si usamos algo m'as de memoria. Si almacenamos en un mapa los 
 			//resultados que tengamos siempre podemos volver a usar D=0 como hacen en el paper
-			List<List<String>> splitListToSubLists = splitListToSubLists(S, S.size()/this.numberOfSplits);
-			//System.out.println("Number of splits "+splitListToSubLists.size());
+			
+			int div=0;
+			
+			if (S.size() >= numberOfSplits)
+			   div = S.size() / numberOfSplits;
+			
+			if ((S.size() % numberOfSplits)>0)
+				div++;
+				
+			
+			List<List<String>> splitListToSubLists = splitListToSubLists(S, div);
+//			System.out.println("Number of splits "+splitListToSubLists.size());
 
 			for(List<String> s: splitListToSubLists){
 				List<String> rest= getRest(s,splitListToSubLists);	
@@ -190,9 +224,9 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Ex
 				//System.out.println("Llamando "+rest+","+s+","+less);
 
 				Future<List<String>> submit = executorService.submit(dt);
-				outLists.add(submit.get());
-				
+				outLists.add(submit.get());	
 			}
+			
 			return plus(outLists);
 		}
 		
@@ -215,9 +249,11 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Ex
 
 		public <T> List<List<T>> splitListToSubLists(List<T> parentList, int subListSize) {
 			  List<List<T>> subLists = new ArrayList<List<T>>();
+			  
 			  if (subListSize > parentList.size()) {
 			     subLists.add(parentList);
-			  } else {
+			     } 
+			  else {
 			     int remainingElements = parentList.size();
 			     int startIndex = 0;
 			     int endIndex = subListSize;
@@ -252,12 +288,14 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Ex
 //		return plus(A1,A2);
 //	}
 	}
+
+	/*
 	private List<String> plus(List<String> a1, List<String> a2) {
 		List<String> res=new ArrayList<String>();
 		res.addAll(a1);
 		res.addAll(a2);
 		return res;
-	}
+	}*/
 
 	private List<String> less(List<String> aC, List<String> s2) {
 		List<String> res=new ArrayList<String>();
