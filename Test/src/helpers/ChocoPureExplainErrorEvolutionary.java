@@ -21,13 +21,9 @@ import choco.kernel.model.Model;
 import choco.kernel.model.constraints.Constraint;
 import choco.kernel.model.variables.integer.IntegerVariable;
 import choco.kernel.solver.Solver;
-import es.us.isa.ChocoReasoner.ChocoQuestion;
-import es.us.isa.ChocoReasoner.ChocoReasoner;
 import es.us.isa.ChocoReasoner.ChocoResult;
 import es.us.isa.FAMA.Benchmarking.PerformanceResult;
 import es.us.isa.FAMA.Exceptions.FAMAException;
-import es.us.isa.FAMA.Reasoner.Reasoner;
-import es.us.isa.FAMA.Reasoner.questions.ValidConfigurationErrorsQuestion;
 import es.us.isa.FAMA.models.featureModel.GenericFeature;
 import es.us.isa.FAMA.models.featureModel.Product;
 

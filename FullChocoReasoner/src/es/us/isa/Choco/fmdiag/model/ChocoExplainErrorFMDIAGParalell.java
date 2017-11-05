@@ -1,4 +1,4 @@
-package es.us.isa.Choco.fmdiag;
+package es.us.isa.Choco.fmdiag.model;
 
 import static choco.Choco.eq;
 
@@ -44,7 +44,7 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Ex
 	Collection<Error> errors;
 	Map<String, Constraint> relations = null;
 	//int numberOfThreads = Runtime.getRuntime().availableProcessors();
-	int numberOfThreads = 4;
+	public int numberOfThreads = 4;
 
 	ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -55,8 +55,9 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Ex
 	public int m=1;
 	public boolean flexactive=false;
 
-	public ChocoExplainErrorFMDIAGParalell(int m){
+	public ChocoExplainErrorFMDIAGParalell(int m, int t){
 		this.m = m;
+		this.numberOfThreads = t;
 	}
 	
 	public PerformanceResult answer(Reasoner r) throws FAMAException {

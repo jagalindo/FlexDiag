@@ -32,6 +32,7 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 	Map<String, Constraint> relations = null;
 	public boolean flexactive = false;
 	public int m = 1;
+
 	Product s,r;
 	public Map<String, Constraint> result = new HashMap<String, Constraint>();
 
