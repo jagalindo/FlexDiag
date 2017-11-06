@@ -47,13 +47,8 @@ public class Principal {
 			long start = System.currentTimeMillis();
 			reasoner.ask(fmdiag);
 			long end = System.currentTimeMillis();
-/*
+
 			System.out.println(modelPath.substring(modelPath.lastIndexOf(File.separator) + 1) + "|"
-					+ productPath.substring(productPath.lastIndexOf(File.separator) + 1) + "|" + m + "|"
-					+ fm.getFeaturesNumber() + "|" + fm.getNumberOfDependencies() + "|" + reasoner.getVariables().size()
-					+ "|" + reasoner.getRelations().size() + "|" + (end - start) + "|");
-*/			
-		System.out.println(modelPath.substring(modelPath.lastIndexOf(File.separator) + 1) + "|"
 					+ productPath.substring(productPath.lastIndexOf(File.separator) + 1) + "|" + prod+ "|" + m + "|"
 					+ fm.getFeaturesNumber() + "|" + fm.getNumberOfDependencies() + "|" + reasoner.getVariables().size()
 					+ "|" + reasoner.getRelations().size() + "|" +start+ "|"+ end+"|"+ fmdiag.result.keySet());
@@ -84,13 +79,8 @@ public class Principal {
 			reasoner.ask(flexdiagP);
 			long end = System.currentTimeMillis();
 
-/*			System.out.println(modelPath.substring(modelPath.lastIndexOf(File.separator) + 1) + "|"
-					+ productPath.substring(productPath.lastIndexOf(File.separator) + 1) + "|" + m + "|"
-					+ fm.getFeaturesNumber() + "|" + fm.getNumberOfDependencies() + "|" + reasoner.getVariables().size()
-					+ "|" + reasoner.getRelations().size() + "|" + (end - start)+ "|");
-	*/	  
 			System.out.println(modelPath.substring(modelPath.lastIndexOf(File.separator) + 1) + "|"
-					+ productPath.substring(productPath.lastIndexOf(File.separator) + 1) + "|" + prod+ "|" + m + "|"
+					+ productPath.substring(productPath.lastIndexOf(File.separator) + 1) + "|" + prod+ "|" + m + "|" + t + "|"
 					+ fm.getFeaturesNumber() + "|" + fm.getNumberOfDependencies() + "|" + reasoner.getVariables().size()
 					+ "|" + reasoner.getRelations().size() + "|" +start+ "|"+ end+"|"+ flexdiagP.result.keySet());
 		  
