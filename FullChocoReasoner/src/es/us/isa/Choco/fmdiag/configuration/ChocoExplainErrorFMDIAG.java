@@ -72,7 +72,6 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 			feats.add(name);
 		}
 
-
 		Map<String, Constraint> requirementConstraint = new HashMap<String, Constraint>();
 		for (GenericFeature f : this.r.getFeatures()) {
 			IntegerVariable var = chReasoner.getVariables().get(f.getName());
@@ -175,7 +174,4 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 		s.solve();
 		return s.isFeasible();
 	}
-
-
-
 }

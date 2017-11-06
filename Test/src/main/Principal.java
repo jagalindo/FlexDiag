@@ -4,7 +4,7 @@ import java.io.File;
 
 import es.us.isa.Choco.fmdiag.configuration.ChocoExplainErrorEvolutionary;
 import es.us.isa.Choco.fmdiag.configuration.ChocoExplainErrorFMDIAG;
-import es.us.isa.Choco.fmdiag.model.ChocoExplainErrorFMDIAGParalell;
+import es.us.isa.Choco.fmdiag.configuration.ChocoExplainErrorFMDIAGParalell2;
 import es.us.isa.ChocoReasoner.ChocoReasoner;
 import es.us.isa.ChocoReasoner.questions.ChocoDetectErrorsQuestion;
 import es.us.isa.FAMA.models.FAMAfeatureModel.FAMAFeatureModel;
@@ -47,7 +47,12 @@ public class Principal {
 			long start = System.currentTimeMillis();
 			reasoner.ask(fmdiag);
 			long end = System.currentTimeMillis();
-
+/*
+			System.out.println(modelPath.substring(modelPath.lastIndexOf(File.separator) + 1) + "|"
+					+ productPath.substring(productPath.lastIndexOf(File.separator) + 1) + "|" + m + "|"
+					+ fm.getFeaturesNumber() + "|" + fm.getNumberOfDependencies() + "|" + reasoner.getVariables().size()
+					+ "|" + reasoner.getRelations().size() + "|" + (end - start) + "|");
+*/			
 		System.out.println(modelPath.substring(modelPath.lastIndexOf(File.separator) + 1) + "|"
 					+ productPath.substring(productPath.lastIndexOf(File.separator) + 1) + "|" + prod+ "|" + m + "|"
 					+ fm.getFeaturesNumber() + "|" + fm.getNumberOfDependencies() + "|" + reasoner.getVariables().size()
@@ -64,42 +69,31 @@ public class Principal {
 			ProductManager pman = new ProductManager();
 
 			FAMAFeatureModel fm = (FAMAFeatureModel) reader.parseFile(modelPath);
-			
-			/////////////////////*****
+
+			Product prod = pman.readProduct(fm, productPath);
+
 			ChocoReasoner reasoner = new ChocoReasoner();
+			fm.transformTo(reasoner);
 
-			ChocoDetectErrorsQuestion Q1 = new ChocoDetectErrorsQuestion();
-			Q1.setObservations(fm.getObservations());
-			reasoner.ask(Q1);
-			
-			/////////////////////*****
-			
-//			Product prod = pman.readProduct(fm, productPath);			
-			
-			ChocoExplainErrorFMDIAGParalell flexdiagP = new ChocoExplainErrorFMDIAGParalell(m, t);
-			flexdiagP.setErrors(Q1.getErrors());
-			flexdiagP.returnAllPossibeExplanations=true;
+			ChocoExplainErrorFMDIAGParalell2 flexdiagP  = new ChocoExplainErrorFMDIAGParalell2(m, t);
+			flexdiagP.setConfiguration(prod);
+			flexdiagP.setRequirement(new Product());
 			flexdiagP.flexactive = true;
-
+	
 			long start = System.currentTimeMillis();
 			reasoner.ask(flexdiagP);
 			long end = System.currentTimeMillis();
-			
-//			fmdiagP.setConfiguration(prod);
-//			fmdiagP.setRequirement(new Product());
-			
-	//		fmdiagP.m = m;
-			
-/*
+
+/*			System.out.println(modelPath.substring(modelPath.lastIndexOf(File.separator) + 1) + "|"
+					+ productPath.substring(productPath.lastIndexOf(File.separator) + 1) + "|" + m + "|"
+					+ fm.getFeaturesNumber() + "|" + fm.getNumberOfDependencies() + "|" + reasoner.getVariables().size()
+					+ "|" + reasoner.getRelations().size() + "|" + (end - start)+ "|");
+	*/	  
 			System.out.println(modelPath.substring(modelPath.lastIndexOf(File.separator) + 1) + "|"
 					+ productPath.substring(productPath.lastIndexOf(File.separator) + 1) + "|" + prod+ "|" + m + "|"
 					+ fm.getFeaturesNumber() + "|" + fm.getNumberOfDependencies() + "|" + reasoner.getVariables().size()
-					+ "|" + reasoner.getRelations().size() + "|" +start+ "|"+ end+"|"+ fmdiagP.errors_explanations.keySet());
-*/
-			System.out.println(modelPath.substring(modelPath.lastIndexOf(File.separator) + 1) + "|"
-					+ productPath.substring(productPath.lastIndexOf(File.separator) + 1) + "|" + m + "|"
-					+ fm.getFeaturesNumber() + "|" + fm.getNumberOfDependencies() + "|" + reasoner.getVariables().size()
-					+ "|" + reasoner.getRelations().size() + "|" +start+ "|"+ end+"|"+ flexdiagP.errors_explanations.keySet());
+					+ "|" + reasoner.getRelations().size() + "|" +start+ "|"+ end+"|"+ flexdiagP.result.keySet());
+		  
 		} 
 		else if (op.equals("evolutionary")) {
 
