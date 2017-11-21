@@ -47,7 +47,8 @@ minGroupedCalculation <- function(x){
 
 
 uniqueCount <- function(x){
-  split<-strsplit(as.character(x$union), ", ", fixed=TRUE)
+  string<-gsub(" ", "", as.character(x$union), fixed = TRUE)
+  split<-strsplit(string, ",", fixed=TRUE)
   unlist<-unlist(split)
   result<-paste(unlist[duplicated(unlist)], sep = ", ",collapse=", ")
   return(result)
@@ -67,9 +68,9 @@ return(tailBut)
 }
 
 #------------- process ----------
-#args <- commandArgs(trailingOnly = TRUE)
-#args<-c("automotive")
-args<-c("evol")
+args <- commandArgs(trailingOnly = TRUE)
+#args<-c("evol")
+#args<-c("flex-real")
 
 inputName<-paste("./sourceData/",args[1],".csv", sep = "")
 outputName<-paste("./processedData/",args[1],".csv", sep = "")
@@ -107,9 +108,9 @@ if("m" %in% colnames(data))
   data$union <- paste(as.character(data$result),as.character(data$min), sep = ", ")
   data$union <-adply(data,1,uniqueCount,.expand = T)$V1
  
-  
+  data$unionSize<-str_count(data$union, ",")+1
   ###calculating accuracy and minimality
-  data$accuracy<-(str_count(data$union, ",")+1)/data$minSize
+  data$accuracy<-data$unionSize/data$minSize
   data$minimality <- data$minSize / data$resultSize
  
   #Calculate another set of metrics between different orders to check if m=1 always returns the same result.
@@ -134,6 +135,7 @@ if("m" %in% colnames(data))
   data$minSize<-0
   data$min<-""
   data$union <-""
+  data$unionSize<-0
   data$accuracy<-0
   data$minimality <-0
   data <- rbind(data,dataFlex)
@@ -146,6 +148,7 @@ if("m" %in% colnames(data))
   ###calculating accuracy and minimality
   data$accuracy<-(str_count(data$union, ",")+1)/data$minSize
   data$minimality <- data$minSize / data$resultSize
+  data$unionSize<-str_count(data$union, ",")+1
   data<-data[which(data$m =="evolutionary"),] 
   #data<-data[ , !(names(data) %in% c("m"))]
   
