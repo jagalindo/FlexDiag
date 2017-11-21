@@ -32,6 +32,7 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 	Map<String, Constraint> relations = null;
 	public boolean flexactive = false;
 	public int m = 1;
+
 	Product s,r;
 	public Map<String, Constraint> result = new HashMap<String, Constraint>();
 
@@ -70,7 +71,6 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 			productConstraint.put(name, Choco.eq(var, 1));
 			feats.add(name);
 		}
-
 
 		Map<String, Constraint> requirementConstraint = new HashMap<String, Constraint>();
 		for (GenericFeature f : this.r.getFeatures()) {
@@ -174,7 +174,4 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 		s.solve();
 		return s.isFeasible();
 	}
-
-
-
 }
