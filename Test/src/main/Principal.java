@@ -6,7 +6,6 @@ import es.us.isa.Choco.fmdiag.configuration.ChocoExplainErrorEvolutionary;
 import es.us.isa.Choco.fmdiag.configuration.ChocoExplainErrorFMDIAG;
 import es.us.isa.Choco.fmdiag.configuration.ChocoExplainErrorFMDIAGParalell2;
 import es.us.isa.ChocoReasoner.ChocoReasoner;
-import es.us.isa.ChocoReasoner.questions.ChocoDetectErrorsQuestion;
 import es.us.isa.FAMA.models.FAMAfeatureModel.FAMAFeatureModel;
 import es.us.isa.FAMA.models.FAMAfeatureModel.fileformats.XMLReader;
 import es.us.isa.FAMA.models.featureModel.Product;
@@ -57,8 +56,8 @@ public class Principal {
 			String productPath = args[2];
 			Integer m = Integer.parseInt(args[3]);
 			Integer t = Integer.parseInt(args[4]);
-
-			// ------------------------------
+			
+			//------------------------------
 
 			XMLReader reader = new XMLReader();
 			ProductManager pman = new ProductManager();
@@ -83,7 +82,6 @@ public class Principal {
 					+ productPath.substring(productPath.lastIndexOf(File.separator) + 1) + "|" + prod+ "|" + m + "|" + t + "|"
 					+ fm.getFeaturesNumber() + "|" + fm.getNumberOfDependencies() + "|" + reasoner.getVariables().size()
 					+ "|" + reasoner.getRelations().size() + "|" +start+ "|"+ end+"|"+ flexdiagP.result.keySet());
-		  
 		} 
 		else if (op.equals("evolutionary")) {
 
