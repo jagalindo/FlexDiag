@@ -118,10 +118,10 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 		if (S.size() == 0 || !isConsistent(less(AC, S))) {
 			return new ArrayList<String>();
 		} else {
-			return diag(new ArrayList<String>(), S, AC);
+			return diag2(new ArrayList<String>(), S, AC);
 		}
 	}
-
+	
 	public List<String> diag(List<String> D, List<String> S, List<String> AC) {
 		if (D.size() != 0 && isConsistent(AC)) {
 			return new ArrayList<String>();
@@ -140,6 +140,27 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 		List<String> S2 = S.subList(k, S.size());
 		List<String> A1 = diag(S2, S1, less(AC, S2));
 		List<String> A2 = diag(A1, S2, less(AC, A1));
+		return plus(A1, A2);
+	}
+
+	public List<String> diag2(List<String> D, List<String> S, List<String> AC) {
+		if (D.size() != 0 && isConsistent(AC)) {
+			return new ArrayList<String>();
+		}
+		if (flexactive) {
+			if (S.size() <= m) {
+				return S;
+			}
+		} else {
+			if (S.size() == 1) {
+				return S;
+			}
+		}
+		int k = S.size() / 2;
+		List<String> S1 = S.subList(0, k);
+		List<String> S2 = S.subList(k, S.size());
+		List<String> A1 = diag(S2, S1, less(AC, S2));
+		List<String> A2 = diag(new ArrayList<String>(), S2, AC);
 		return plus(A1, A2);
 	}
 
