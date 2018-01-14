@@ -5,6 +5,7 @@ import static choco.Choco.eq;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,6 +53,7 @@ public class ChocoExplainErrorFMDIAGParalell2 extends ChocoQuestion implements V
 	public Map<String, Constraint> result = new HashMap<String, Constraint>();
 
 	public int numberOfThreads = 4;
+	public int baseSize = 100;
 
 	ExecutorService executorService = Executors.newCachedThreadPool();
 	////////////For Parallel FlexDiag...
@@ -122,6 +124,7 @@ public class ChocoExplainErrorFMDIAGParalell2 extends ChocoQuestion implements V
 
 		} else {
 			List<String> allExpl = new LinkedList<String>();
+			//HashSet<String> allExpl = new HashSet<String>();
 			List<String> fmdiag = fmdiag(S, AC);
 
 			while (fmdiag.size() != 0) {
@@ -161,6 +164,7 @@ public class ChocoExplainErrorFMDIAGParalell2 extends ChocoQuestion implements V
 		List<String> D, S, AC;
 		int numberOfSplits;
 		ExecutorService executorService;
+
 		public diagThreads(List<String> D, List<String> S,List<String> AC,int numberOfSplits, ExecutorService executorService){
 			this.D=D;
 			this.S=S;
@@ -171,7 +175,10 @@ public class ChocoExplainErrorFMDIAGParalell2 extends ChocoQuestion implements V
 		
 		public List<String> call() throws Exception {
 			if (D.size() != 0 && isConsistent(AC)){
-				return new ArrayList<String>();
+				List<String> nAC = plus(D, AC);
+				diagThreads dt = new diagThreads(new ArrayList<String>(), D, nAC, numberOfSplits, executorService);
+			    Future<List<String>> submit = executorService.submit(dt);
+			    return submit.get();
 			}
 			
 			if(flexactive){
@@ -183,7 +190,7 @@ public class ChocoExplainErrorFMDIAGParalell2 extends ChocoQuestion implements V
 				   return S;
 				}
 			}
-					
+			
 			List<List<String>> outLists= new LinkedList<List<String>>();
 			//Hay una optimizacion a realizar si usamos algo m'as de memoria. Si almacenamos en un mapa los 
 			//resultados que tengamos siempre podemos volver a usar D=0 como hacen en el paper
@@ -195,15 +202,15 @@ public class ChocoExplainErrorFMDIAGParalell2 extends ChocoQuestion implements V
 			
 			if ((S.size() % numberOfSplits)>0)
 				div++;
-				
+
 			
 			List<List<String>> splitListToSubLists = splitListToSubLists(S, div);
 
 			for(List<String> s: splitListToSubLists){
-				List<String> rest= getRest(s,splitListToSubLists);	
+				List<String> rest= getRest(s,splitListToSubLists);					
 				List<String> less = less(AC,rest);
+				
 				diagThreads dt = new diagThreads(rest, s,less , numberOfSplits, executorService);
-
 				Future<List<String>> submit = executorService.submit(dt);
 				outLists.add(submit.get());	
 			}
@@ -218,6 +225,13 @@ public class ChocoExplainErrorFMDIAGParalell2 extends ChocoQuestion implements V
 					res.addAll(c);
 				}
 			}
+			return res;
+		}
+
+		private List<String> plus(List<String> a1, List<String> a2) {
+			List<String> res = new ArrayList<String>();
+			res.addAll(a1);
+			res.addAll(a2);
 			return res;
 		}
 
@@ -287,4 +301,27 @@ public class ChocoExplainErrorFMDIAGParalell2 extends ChocoQuestion implements V
 		s.solve();
 		return s.isFeasible();
 	}
+	
+	/////////////////////Sequential FlexDiag
+	public List<String> diag(List<String> D, List<String> S, List<String> AC) {
+		if (D.size() != 0 && isConsistent(AC)) {
+			return new ArrayList<String>();
+		}
+		if (flexactive) {
+			if (S.size() <= m) {
+				return S;
+			}
+		} else {
+			if (S.size() == 1) {
+				return S;
+			}
+		}
+		int k = S.size() / 2;
+		List<String> S1 = S.subList(0, k);
+		List<String> S2 = S.subList(k, S.size());
+		List<String> A1 = diag(S2, S1, less(AC, S2));
+		List<String> A2 = diag(A1, S2, less(AC, A1));
+		return plus(A1, A2);
+	}
+
 }
