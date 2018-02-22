@@ -7,7 +7,7 @@ import java.util.Set;
 import choco.kernel.model.constraints.Constraint;
 import es.us.isa.Choco.fmdiag.configuration.ChocoExplainErrorEvolutionary;
 import es.us.isa.Choco.fmdiag.configuration.ChocoExplainErrorFMDIAG;
-import es.us.isa.Choco.fmdiag.configuration.ChocoExplainErrorFMDIAGParalell2;
+import es.us.isa.Choco.fmdiag.configuration.ChocoExplainErrorFMDIAGParalell;
 import es.us.isa.ChocoReasoner.ChocoReasoner;
 import es.us.isa.FAMA.models.FAMAfeatureModel.FAMAFeatureModel;
 import es.us.isa.FAMA.models.FAMAfeatureModel.fileformats.XMLReader;
@@ -25,9 +25,12 @@ public class Principal {
 		String op = args[0];// flexdiag - prods - evolutionary
 		String modelPath = args[1];
 
-		if (op.equals("flexdiag")) {
+		if (op.equals("flexdiag") || op.equals("fmdiag")) {
 			String productPath = args[2];
-			Integer m = Integer.parseInt(args[3]);
+			
+			Integer m = 1;
+			if (op.equals("flexdiag"))
+				m = Integer.parseInt(args[3]);
 
 			// ------------------------------
 
@@ -45,7 +48,10 @@ public class Principal {
     		fmdiag.setConfiguration(prod);
 			fmdiag.setRequirement(new Product());
 			fmdiag.flexactive = true;
-			fmdiag.m = m;
+		
+			if (op.equals("flexdiag"))
+				fmdiag.m = m;
+			
 			long start = System.currentTimeMillis();
 			reasoner.ask(fmdiag);
 			long end = System.currentTimeMillis();
@@ -55,10 +61,17 @@ public class Principal {
 					+ fm.getFeaturesNumber() + "|" + fm.getNumberOfDependencies() + "|" + reasoner.getVariables().size()
 					+ "|" + reasoner.getRelations().size() + "|" +start+ "|"+ end+"|"+ fmdiag.result.keySet());
 
-		}else if (op.equals("flexdiagP")) {
+		}else if (op.equals("flexdiagP") || op.equals("fmP")) {
 			String productPath = args[2];
-			Integer m = Integer.parseInt(args[3]);
-			Integer t = Integer.parseInt(args[4]);
+			
+			Integer m = 1, t = 1;
+			
+			if (op.equals("flexdiagP")){
+				m = Integer.parseInt(args[3]);
+				t = Integer.parseInt(args[4]);
+			}else{
+				t = Integer.parseInt(args[3]);	
+			}
 			
 			//------------------------------
 
@@ -72,11 +85,14 @@ public class Principal {
 			ChocoReasoner reasoner = new ChocoReasoner();
 			fm.transformTo(reasoner);
 
-			ChocoExplainErrorFMDIAGParalell2 flexdiagP  = new ChocoExplainErrorFMDIAGParalell2(m, t);
+			ChocoExplainErrorFMDIAGParalell flexdiagP  = new ChocoExplainErrorFMDIAGParalell();
+			
 			flexdiagP.setConfiguration(prod);
 			flexdiagP.setRequirement(new Product());
 			flexdiagP.flexactive = true;
-	
+			flexdiagP.m = m;
+			flexdiagP.numberOfThreads = t;
+			
 			long start = System.currentTimeMillis();
 			reasoner.ask(flexdiagP);
 			long end = System.currentTimeMillis();
