@@ -169,18 +169,12 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Va
 		/*1st base case*/
 			if (D.size() != 0 && isConsistent(AC)){	
 				/*Since AC does not contain D, when D is not empty and 
-				 *AC is consistent, then possibly D contains inconsistencies*/ 
-				List<String> nAC = plus(D, AC);
-				
-				if (!isConsistent(nAC)){			
-					/*If (AC + D) contains inconsistencies, then D is analyzed to look for them*/
-					diagThreads dt = new diagThreads(new ArrayList<String>(), D, nAC, numberOfSplits, executorService);
-					Future<List<String>> submit = executorService.submit(dt);
-					return submit.get();
-				}
-				else{ /*D is not the source of inconsistencies*/
-					new ArrayList<String>();
-				}
+				 *AC is consistent, then D contains inconsistencies
+				 *then D is analyzed to look for them*/
+				List<String> nAC = plus(D, AC);		
+				diagThreads dt = new diagThreads(new ArrayList<String>(), D, nAC, numberOfSplits, executorService);
+				Future<List<String>> submit = executorService.submit(dt);
+				return submit.get();
 			}
 			
 		/*Since AC is non-consistent and D is not the inconsistencies source, then S is their source.
