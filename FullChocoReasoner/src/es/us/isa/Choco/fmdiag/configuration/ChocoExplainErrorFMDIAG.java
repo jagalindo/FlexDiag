@@ -56,10 +56,9 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 	}
 
 	public PerformanceResult answer(Reasoner r) throws FAMAException {
-
 		ChocoResult res = new ChocoResult();
 		chReasoner = (ChocoReasoner) r;
-		// solve the problem y fmdiag
+
 		relations = new HashMap<String, Constraint>();
 
 		Map<String, Constraint> productConstraint = new HashMap<String, Constraint>();
@@ -75,7 +74,6 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 		Map<String, Constraint> requirementConstraint = new HashMap<String, Constraint>();
 		for (GenericFeature f : this.r.getFeatures()) {
 			IntegerVariable var = chReasoner.getVariables().get(f.getName());
-			//System.out.println(var);
 			requirementConstraint.put("R_" + f.getName(), Choco.eq(var, 1));
 		}
 
@@ -83,12 +81,9 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 		relations.putAll(requirementConstraint);
 		relations.putAll(productConstraint);
 		ArrayList<String> S = new ArrayList<String>(feats);
-		//System.out.println("Order of S: "+S);
 		ArrayList<String> AC = new ArrayList<String>(relations.keySet());
-		//AC.addAll(productConstraint.keySet());
-
+		
 		if (returnAllPossibeExplanations == false) {
-
 			List<String> fmdiag = fmdiag(S, AC);
 
 			for (String s : fmdiag) {
@@ -115,13 +110,20 @@ public class ChocoExplainErrorFMDIAG extends ChocoQuestion implements ValidConfi
 	}
 
 	public List<String> fmdiag(List<String> S, List<String> AC) {
+		//S is empty or (AC - S) non-consistent
 		if (S.size() == 0 || !isConsistent(less(AC, S))) {
 			return new ArrayList<String>();
-		} else {
-			return diag2(new ArrayList<String>(), S, AC);
+		} 
+		//(AC + S) is consistent
+		else if (isConsistent(AC)){
+			return new ArrayList<String>();
+		}else { //(AC + S) is non-consistent		else {
+			return diag(new ArrayList<String>(), S, AC);
 		}
 	}
 	
+	public volatile int step = 0;
+
 	public List<String> diag(List<String> D, List<String> S, List<String> AC) {
 		if (D.size() != 0 && isConsistent(AC)) {
 			return new ArrayList<String>();
