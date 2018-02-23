@@ -5,9 +5,11 @@ import static choco.Choco.eq;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -21,6 +23,7 @@ import choco.kernel.model.Model;
 import choco.kernel.model.constraints.Constraint;
 import choco.kernel.model.variables.integer.IntegerVariable;
 import choco.kernel.solver.Solver;
+import es.us.isa.Choco.fmdiag.configuration.ChocoExplainErrorFMDIAGParalell3.Solution;
 import es.us.isa.ChocoReasoner.ChocoQuestion;
 import es.us.isa.ChocoReasoner.ChocoReasoner;
 import es.us.isa.ChocoReasoner.ChocoResult;
@@ -30,6 +33,8 @@ import es.us.isa.FAMA.Reasoner.Reasoner;
 import es.us.isa.FAMA.Reasoner.questions.ValidConfigurationErrorsQuestion;
 import es.us.isa.FAMA.models.featureModel.GenericFeature;
 import es.us.isa.FAMA.models.featureModel.Product;
+
+import java.util.HashSet.*;
 
 public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements ValidConfigurationErrorsQuestion {
 
@@ -116,7 +121,7 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Va
 		}
 		return new ChocoResult();
 	}
-
+	
 	public List<String> fmdiag(List<String> S, List<String> AC) {
 		//S is empty or (AC - S) non-consistent
 		if (S.size() == 0 || !isConsistent(less(AC, S))) {
@@ -128,6 +133,8 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Va
 		}else { //(AC + S) is non-consistent
 			diagThreads dt = new diagThreads(new ArrayList<String>(), S, AC, numberOfThreads, executorService);
 			Future<List<String>> submit = executorService.submit(dt);
+			
+			solution.clear();
 			
 			try {
 				return submit.get();
@@ -141,6 +148,49 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Va
 		}
 	}
 	
+	public class currentSolution{
+		public volatile List<Set<String>> Ds = new ArrayList<Set<String>>();
+		public volatile List<Set<String>> Ss = new ArrayList<Set<String>>();
+		public volatile List<Set<String>> Sols = new ArrayList<Set<String>>();
+				
+		public void clear(){
+			Ds.clear();
+			Ss.clear();
+			Sols.clear();
+		}
+		
+		public void record(List<String> D, List<String> S, List<String> Sol){	
+			solution.Ds.add(new HashSet<String>(D));
+			solution.Ss.add(new HashSet<String>(S));
+			solution.Sols.add(new HashSet<String>(Sol));
+		}
+		
+		public int contains(List<String> D, List<String> S){
+			int i = 0;
+			
+			Set<String> ds = new HashSet<String>(D);
+			Set<String> ss = new HashSet<String>(S);
+			
+			for (Set<String> setD: Ds){
+				if (setD.equals(ds) && Ss.get(i).equals(ss)){ 
+					//We found D in Ds and we found S in Ss in the same position
+					return i;	
+				}
+			
+				if (setD.equals(ss) && Ss.get(i).equals(ds)){ 
+					//We found S in Ds and we found D in Ss in the same position
+					return i;	
+				}
+			
+				i++;
+			}
+
+			return -1;
+		}
+	}
+	
+    public final currentSolution solution = new currentSolution();
+    
 	public class diagThreads implements Callable<List<String>>{
 		List<String> D, S, AC;
 		int numberOfSplits;
@@ -166,15 +216,24 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Va
 		 *For the 1st thread always D is empty and S inconsistent. Then, AC is inconsistent.*/
 		
 		public List<String> call() throws Exception {
+		/*The problem was already solved?*/
+			int exists = solution.contains(D, S);
+			
+			if (exists >=0){
+				List<String> list = new ArrayList<String>(solution.Sols.get(exists));
+				return list;
+			}
+				
 		/*1st base case*/
 			if (D.size() != 0 && isConsistent(AC)){	
-				/*Since AC does not contain D, when D is not empty and 
-				 *AC is consistent, then D contains inconsistencies
-				 *then D is analyzed to look for them*/
+				/*Since AC does not contain D, when D is not empty and AC is consistent, 
+				 *then D contains inconsistencies then D is analyzed to look for them*/
 				List<String> nAC = plus(D, AC);		
 				diagThreads dt = new diagThreads(new ArrayList<String>(), D, nAC, numberOfSplits, executorService);
 				Future<List<String>> submit = executorService.submit(dt);
-				return submit.get();
+				List<String> sol = submit.get();
+				solution.record(D, S, sol);
+				return sol;
 			}
 			
 		/*Since AC is non-consistent and D is not the inconsistencies source, then S is their source.
@@ -187,10 +246,12 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Va
 		/*2nd base case*/
 			if(flexactive){
 				if(S.size()<=m){
+				   solution.record(D, S, S);
 				   return S;
 				}
 			}else{				
 				if(S.size()==1){
+				   solution.record(D, S, S);
 				   return S;
 				}
 			}
@@ -203,7 +264,6 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Va
 						
 			if (S.size() >= numberOfSplits){
 			   div = S.size() / numberOfSplits;
-			
 			   if ((S.size() % numberOfSplits)>0)
 				   div++;
 			}
@@ -211,7 +271,6 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Va
 				div = 1;
 			
 			List<List<String>> splitListToSubLists = splitListToSubLists(S, div);
-
 			
 			////*CONQUER PHASE*////
 			for(List<String> s: splitListToSubLists){
@@ -227,8 +286,11 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Va
 				outLists.add(submit.get());
 			}
 			
-			/*We return the union of list of results*/
-			return plus(outLists);
+			/*We save and return the union of results lists*/
+			List<String> fullSolution = plus(outLists);
+			solution.record(D, S, fullSolution);
+			
+			return fullSolution;
 		}
 
 		private List<String> getRest(List<String> s2, List<List<String>> splitListToSubLists) {
