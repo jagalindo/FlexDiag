@@ -128,9 +128,10 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Va
 			return new ArrayList<String>();
 		} 
 		//(AC + S) is consistent
-		else if (isConsistent(AC)){
+		/*else if (isConsistent(AC)){
 			return new ArrayList<String>();
-		}else { //(AC + S) is non-consistent
+		}*/
+		else { //(AC + S) is non-consistent
 			diagThreads dt = new diagThreads(new ArrayList<String>(), S, AC, numberOfThreads, executorService);
 			Future<List<String>> submit = executorService.submit(dt);
 			
@@ -176,12 +177,7 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Va
 					//We found D in Ds and we found S in Ss in the same position
 					return i;	
 				}
-			
-				if (setD.equals(ss) && Ss.get(i).equals(ds)){ 
-					//We found S in Ds and we found D in Ss in the same position
-					return i;	
-				}
-			
+				
 				i++;
 			}
 
@@ -280,6 +276,7 @@ public class ChocoExplainErrorFMDIAGParalell extends ChocoQuestion implements Va
 				 *and its results are grouped in the results list*/ 		
 				List<String> rest= getRest(s,splitListToSubLists);	
 				List<String> less = less(AC,rest);
+				
 				diagThreads dt = new diagThreads(rest, s,less , numberOfSplits, executorService);
 				
 				Future<List<String>> submit = executorService.submit(dt);
